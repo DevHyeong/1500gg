@@ -1,0 +1,17 @@
+server:
+  port: 1234
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+lol:
+  api:
+    key: RGAPI-4479766b-4ee2-4329-959b-826f8b1f9e72
