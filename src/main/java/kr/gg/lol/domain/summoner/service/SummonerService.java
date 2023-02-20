@@ -1,5 +1,6 @@
 package kr.gg.lol.domain.summoner.service;
 
+import kr.gg.lol.common.util.Rest;
 import kr.gg.lol.domain.summoner.dto.LeagueDto;
 import kr.gg.lol.domain.summoner.dto.SummonerDto;
 import kr.gg.lol.domain.summoner.entity.League;
@@ -32,6 +33,8 @@ public class SummonerService {
 
     private @Value("${lol.api.key}") String key;
 
+    private final Rest rest;
+
     private final SummonerRepository summonerRepository;
 
     private final SummonerJdbcRepository summonerJdbcRepository;
@@ -52,17 +55,9 @@ public class SummonerService {
                     .expand(name)
                     .toUri();
 
-            RequestEntity requestEntity = RequestEntity.get(uri)
-                    .header("X-Riot-Token", key)
-                    .build();
-            try{
-                ResponseEntity<SummonerDto> response = restTemplate.exchange(uri, HttpMethod.GET,
-                        requestEntity, SummonerDto.class);
-                saveSummoner(response);
-                return response;
-            }catch (HttpClientErrorException e){
-                return ResponseEntity.notFound().build();
-            }
+            ResponseEntity<SummonerDto> response = rest.get(uri, SummonerDto.class);
+            saveSummoner(response);
+            return response;
         }
 
         return ResponseEntity.ok(toDto(summoner.get()));
@@ -82,15 +77,8 @@ public class SummonerService {
                     .expand(id)
                     .toUri();
 
-            RequestEntity requestEntity = RequestEntity.get(uri)
-                    .header("X-Riot-Token", key)
-                    .build();
-
-            ResponseEntity<List<LeagueDto>> response = restTemplate.exchange(uri, HttpMethod.GET,
-                    requestEntity, new ParameterizedTypeReference<List<LeagueDto>>() {});
-
+            ResponseEntity<List<LeagueDto>> response = rest.get(uri, new ParameterizedTypeReference<List<LeagueDto>>() {});
             saveLeagues(response);
-
             return response;
         }
 
