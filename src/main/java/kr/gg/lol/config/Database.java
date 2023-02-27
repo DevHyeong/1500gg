@@ -14,7 +14,7 @@ import java.util.TimeZone;
 @Getter
 public enum Database {
 
-    MYSQL(com.mysql.cj.jdbc.Driver.class, MySQLDialect.class, "jdbc:mysql://%s?characterEncoding=utf8&allowMultiQueries=true&serverTimezone=%s"){
+    MYSQL(com.mysql.cj.jdbc.Driver.class, MySQLDialect.class, "jdbc:mysql://%s?characterEncoding=utf8&allowMultiQueries=true&serverTimezone=%s&useSSL=false"){
         @Override
         protected void setupVariants(BasicDataSource dataSource) {
             String format = String.format(getUrlTemplate(), "localhost:3306/lol", TimeZone.getDefault().getID());
