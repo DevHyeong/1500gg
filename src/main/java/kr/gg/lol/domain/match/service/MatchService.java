@@ -1,5 +1,6 @@
 package kr.gg.lol.domain.match.service;
 
+import kr.gg.lol.common.util.Rest;
 import kr.gg.lol.domain.match.dto.*;
 import kr.gg.lol.domain.match.entity.Ban;
 import kr.gg.lol.domain.match.entity.Match;
@@ -27,13 +28,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MatchService {
-
-    private RestTemplate restTemplate = new RestTemplate();
     private final MatchJdbcRepository matchJdbcRepository;
     private final MatchRepository matchRepository;
-
-    private @Value("${lol.api.key}") String key;
-
+    private final Rest rest;
     /**
      *   매치 리스트
      *
@@ -52,21 +49,12 @@ public class MatchService {
                     .expand(puuid)
                     .toUri();
 
-            RequestEntity requestEntity = RequestEntity.get(uri)
-                    .header("X-Riot-Token", key)
-                    .build();
-
-
-            ResponseEntity<List<String>> response = restTemplate.exchange(uri, HttpMethod.GET,
-                    requestEntity, new ParameterizedTypeReference<List<String>>() {});
-
+            ResponseEntity<List<String>> response = rest.get(uri, new ParameterizedTypeReference<List<String>>() {});
             matchJdbcRepository.bulkInsertMatches(puuid, response.getBody());
-
             return response;
         }
 
         return ResponseEntity.ok(matches.get());
-
 
     }
 
@@ -76,9 +64,7 @@ public class MatchService {
      * */
 
     public ResponseEntity getMatchByMatchId(String matchId){
-
         Optional<Match> match = matchRepository.findById(matchId);
-
         if(match.isEmpty()){
 
             URI uri = UriComponentsBuilder
@@ -89,19 +75,10 @@ public class MatchService {
                     .expand(matchId)
                     .toUri();
 
-            RequestEntity requestEntity = RequestEntity.get(uri)
-                    .header("X-Riot-Token", key)
-                    .build();
-
-            ResponseEntity<MatchDto> response = restTemplate.exchange(uri, HttpMethod.GET,
-                    requestEntity, MatchDto.class);
-
+            ResponseEntity<MatchDto> response = rest.get(uri, MatchDto.class);
             saveMatch(response.getBody());
-
             return response;
-
         }
-
         return ResponseEntity.ok(toDto(match.get()));
 
     }
@@ -120,18 +97,9 @@ public class MatchService {
                 .expand(id)
                 .toUri();
 
-        RequestEntity requestEntity = RequestEntity.get(uri)
-                .header("X-Riot-Token", key)
-                .build();
-
-        ResponseEntity<CurrentGameInfoDto> response = restTemplate.exchange(uri, HttpMethod.GET,
-                requestEntity, CurrentGameInfoDto.class);
-
+        ResponseEntity<CurrentGameInfoDto> response = rest.get(uri, CurrentGameInfoDto.class);
         return response;
     }
-
-
-
 
     private void saveMatch(MatchDto dto){
         Match match = Match.toEntity(dto);
@@ -145,7 +113,6 @@ public class MatchService {
         });
 
         matchJdbcRepository.bulkInsertBans(bans);
-
 
         dto.getInfo().getTeams().forEach(t-> {
 

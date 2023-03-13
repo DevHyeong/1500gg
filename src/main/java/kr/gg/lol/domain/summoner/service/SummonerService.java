@@ -25,20 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static kr.gg.lol.domain.summoner.dto.LeagueDto.toDto;
+
 @Service
 @RequiredArgsConstructor
 public class SummonerService {
-
-    private RestTemplate restTemplate = new RestTemplate();
-
-    private @Value("${lol.api.key}") String key;
-
     private final Rest rest;
-
     private final SummonerRepository summonerRepository;
-
     private final SummonerJdbcRepository summonerJdbcRepository;
-
     private final LeagueRepository leagueRepository;
 
     public ResponseEntity getSummonerByName(String name){
@@ -59,14 +53,11 @@ public class SummonerService {
             saveSummoner(response);
             return response;
         }
-
-        return ResponseEntity.ok(toDto(summoner.get()));
+        return ResponseEntity.ok(SummonerDto.toDto(summoner.get()));
     }
 
     public ResponseEntity getLeagueById(String id){
-
         Optional<List<League>> leagues = leagueRepository.findBySummonerId(id);
-
         if(leagues.isEmpty()){
 
             URI uri = UriComponentsBuilder
@@ -81,49 +72,13 @@ public class SummonerService {
             saveLeagues(response);
             return response;
         }
-
         return ResponseEntity.ok(toDto(leagues.get()));
-
-    }
-
-    private List<LeagueDto> toDto(List<League> leagues){
-        List<LeagueDto> leagueDtos = new ArrayList<>();
-        leagues.forEach(e-> {
-
-            LeagueDto leagueDto = LeagueDto.builder()
-                    .leaguePoints(e.getLeaguePoints())
-                    .wins(e.getWins())
-                    .losses(e.getLosses())
-                    .summonerId(e.getSummonerId())
-                    .summonerName(e.getSummonerName())
-                    .tier(e.getTier())
-                    .queueType(e.getQueueType())
-                    .rank(e.getRank())
-                    .build();
-
-            leagueDtos.add(leagueDto);
-        });
-
-        return leagueDtos;
-    }
-
-
-    private SummonerDto toDto(Summoner summoner){
-        return SummonerDto.builder()
-                .id(summoner.getId())
-                .accountId(summoner.getAccountId())
-                .name(summoner.getName())
-                .puuid(summoner.getPuuid())
-                .summonerLevel(summoner.getSummonerLevel())
-                .profileIconId(summoner.getProfileIconId())
-                .build();
     }
 
     private void saveSummoner(ResponseEntity<SummonerDto> response){
         Assert.notNull(response, "");
 
         SummonerDto dto = response.getBody();
-
         Summoner summoner = Summoner.builder()
                 .accountId(dto.getAccountId())
                 .puuid(dto.getPuuid())
@@ -138,10 +93,10 @@ public class SummonerService {
     }
 
     private void saveLeagues(ResponseEntity<List<LeagueDto>> response){
+        Assert.notNull(response, "");
 
         List<LeagueDto> leagueDtos = response.getBody();
         List<League> leagues = new ArrayList<>();
-
         for(LeagueDto dto : leagueDtos){
 
             League league = League.builder()
@@ -157,7 +112,6 @@ public class SummonerService {
 
             leagues.add(league);
         }
-
         summonerJdbcRepository.bulkInsert(leagues);
 
     }
