@@ -9,12 +9,12 @@ import kr.gg.lol.domain.match.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,6 +22,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static kr.gg.lol.common.constant.CacheConstants.MATCH;
+import static kr.gg.lol.common.constant.CacheConstants.MATCHES;
 
 @Slf4j
 @Service
@@ -38,6 +41,7 @@ public class MatchService {
      *   매치 리스트
      *
      * */
+    @Cacheable(value = MATCHES, key = "#puuid")
     public ResponseEntity getMatchesByPuuid(String puuid){
 
         Optional<List<String>> matches = matchJdbcRepository.findMatchesByPuuid(puuid);
@@ -75,6 +79,7 @@ public class MatchService {
      *
      * */
 
+    @Cacheable(value = MATCH, key = "#matchId")
     public ResponseEntity getMatchByMatchId(String matchId){
 
         Optional<Match> match = matchRepository.findById(matchId);

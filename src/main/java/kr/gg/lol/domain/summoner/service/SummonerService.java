@@ -9,14 +9,10 @@ import kr.gg.lol.domain.summoner.repository.LeagueRepository;
 import kr.gg.lol.domain.summoner.repository.SummonerJdbcRepository;
 import kr.gg.lol.domain.summoner.repository.SummonerRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,13 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static kr.gg.lol.common.constant.CacheConstants.LEAGUE_ID;
+import static kr.gg.lol.common.constant.CacheConstants.SUMMONER_NAME;
+import static kr.gg.lol.common.util.Preconditions.checkNotNull;
+
 @Service
 @RequiredArgsConstructor
-public class SummonerService {
+public class SummonerService{
 
     private RestTemplate restTemplate = new RestTemplate();
-
-    private @Value("${lol.api.key}") String key;
 
     private final Rest rest;
 
@@ -41,6 +39,7 @@ public class SummonerService {
 
     private final LeagueRepository leagueRepository;
 
+    @Cacheable(value = SUMMONER_NAME, key = "#name")
     public ResponseEntity getSummonerByName(String name){
 
         Optional<Summoner> summoner = summonerRepository.findByName(name);
@@ -63,6 +62,7 @@ public class SummonerService {
         return ResponseEntity.ok(toDto(summoner.get()));
     }
 
+    @Cacheable(value = LEAGUE_ID, key = "#id")
     public ResponseEntity getLeagueById(String id){
 
         Optional<List<League>> leagues = leagueRepository.findBySummonerId(id);
@@ -120,7 +120,7 @@ public class SummonerService {
     }
 
     private void saveSummoner(ResponseEntity<SummonerDto> response){
-        Assert.notNull(response, "");
+        checkNotNull(response);
 
         SummonerDto dto = response.getBody();
 
@@ -138,6 +138,7 @@ public class SummonerService {
     }
 
     private void saveLeagues(ResponseEntity<List<LeagueDto>> response){
+        checkNotNull(response);
 
         List<LeagueDto> leagueDtos = response.getBody();
         List<League> leagues = new ArrayList<>();

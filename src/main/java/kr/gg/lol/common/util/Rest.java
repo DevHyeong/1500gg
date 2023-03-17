@@ -1,6 +1,7 @@
 package kr.gg.lol.common.util;
 
 import kr.gg.lol.domain.summoner.dto.SummonerDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -14,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.annotation.PostConstruct;
 import java.net.URI;
 
+@Slf4j
 @Component
 public class Rest {
 
@@ -21,11 +23,6 @@ public class Rest {
 
     @Value("${lol.api.key}")
     private String key;
-
-    @PostConstruct
-    public void init(){
-
-    }
 
     public <T> ResponseEntity<T> get(URI uri, Class<T> responseType){
 
@@ -40,6 +37,7 @@ public class Rest {
 
             return response;
         }catch (HttpClientErrorException e){
+            log.error(e.getMessage());
             throw new RuntimeException("");
         }
     }
