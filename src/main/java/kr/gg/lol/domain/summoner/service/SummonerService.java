@@ -13,7 +13,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -24,19 +23,16 @@ import java.util.Optional;
 import static kr.gg.lol.common.constant.CacheConstants.LEAGUE_ID;
 import static kr.gg.lol.common.constant.CacheConstants.SUMMONER_NAME;
 import static kr.gg.lol.common.util.Preconditions.checkNotNull;
+import static kr.gg.lol.domain.summoner.dto.LeagueDto.toDto;
+
 
 @Service
 @RequiredArgsConstructor
-public class SummonerService{
-
-    private RestTemplate restTemplate = new RestTemplate();
+public class SummonerService {
 
     private final Rest rest;
-
     private final SummonerRepository summonerRepository;
-
     private final SummonerJdbcRepository summonerJdbcRepository;
-
     private final LeagueRepository leagueRepository;
 
     @Cacheable(value = SUMMONER_NAME, key = "#name")
@@ -58,15 +54,12 @@ public class SummonerService{
             saveSummoner(response);
             return response;
         }
-
-        return ResponseEntity.ok(toDto(summoner.get()));
+        return ResponseEntity.ok(SummonerDto.toDto(summoner.get()));
     }
 
     @Cacheable(value = LEAGUE_ID, key = "#id")
     public ResponseEntity getLeagueById(String id){
-
         Optional<List<League>> leagues = leagueRepository.findBySummonerId(id);
-
         if(leagues.isEmpty()){
 
             URI uri = UriComponentsBuilder
@@ -81,49 +74,13 @@ public class SummonerService{
             saveLeagues(response);
             return response;
         }
-
         return ResponseEntity.ok(toDto(leagues.get()));
-
-    }
-
-    private List<LeagueDto> toDto(List<League> leagues){
-        List<LeagueDto> leagueDtos = new ArrayList<>();
-        leagues.forEach(e-> {
-
-            LeagueDto leagueDto = LeagueDto.builder()
-                    .leaguePoints(e.getLeaguePoints())
-                    .wins(e.getWins())
-                    .losses(e.getLosses())
-                    .summonerId(e.getSummonerId())
-                    .summonerName(e.getSummonerName())
-                    .tier(e.getTier())
-                    .queueType(e.getQueueType())
-                    .rank(e.getRank())
-                    .build();
-
-            leagueDtos.add(leagueDto);
-        });
-
-        return leagueDtos;
-    }
-
-
-    private SummonerDto toDto(Summoner summoner){
-        return SummonerDto.builder()
-                .id(summoner.getId())
-                .accountId(summoner.getAccountId())
-                .name(summoner.getName())
-                .puuid(summoner.getPuuid())
-                .summonerLevel(summoner.getSummonerLevel())
-                .profileIconId(summoner.getProfileIconId())
-                .build();
     }
 
     private void saveSummoner(ResponseEntity<SummonerDto> response){
         checkNotNull(response);
 
         SummonerDto dto = response.getBody();
-
         Summoner summoner = Summoner.builder()
                 .accountId(dto.getAccountId())
                 .puuid(dto.getPuuid())
@@ -138,11 +95,11 @@ public class SummonerService{
     }
 
     private void saveLeagues(ResponseEntity<List<LeagueDto>> response){
+
         checkNotNull(response);
 
         List<LeagueDto> leagueDtos = response.getBody();
         List<League> leagues = new ArrayList<>();
-
         for(LeagueDto dto : leagueDtos){
 
             League league = League.builder()
@@ -158,7 +115,6 @@ public class SummonerService{
 
             leagues.add(league);
         }
-
         summonerJdbcRepository.bulkInsert(leagues);
 
     }
