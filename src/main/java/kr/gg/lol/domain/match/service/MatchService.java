@@ -33,7 +33,7 @@ import static kr.gg.lol.common.constant.CacheConstants.MATCHES;
 public class MatchService {
     private final MatchJdbcRepository matchJdbcRepository;
     private final MatchRepository matchRepository;
-    private final Rest rest;
+
     /**
      *   매치 리스트
      *
@@ -53,7 +53,7 @@ public class MatchService {
                     .expand(puuid)
                     .toUri();
 
-            ResponseEntity<List<String>> response = rest.get(uri, new ParameterizedTypeReference<List<String>>() {});
+            ResponseEntity<List<String>> response = Rest.get(uri, new ParameterizedTypeReference<List<String>>() {});
             matchJdbcRepository.bulkInsertMatches(puuid, response.getBody());
             return response;
         }
@@ -80,7 +80,7 @@ public class MatchService {
                     .expand(matchId)
                     .toUri();
 
-            ResponseEntity<MatchDto> response = rest.get(uri, MatchDto.class);
+            ResponseEntity<MatchDto> response = Rest.get(uri, MatchDto.class);
             saveMatch(response.getBody());
             return response;
         }
@@ -102,7 +102,7 @@ public class MatchService {
                 .expand(id)
                 .toUri();
 
-        ResponseEntity<CurrentGameInfoDto> response = rest.get(uri, CurrentGameInfoDto.class);
+        ResponseEntity<CurrentGameInfoDto> response = Rest.get(uri, CurrentGameInfoDto.class);
         return response;
     }
 

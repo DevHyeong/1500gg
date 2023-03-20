@@ -30,7 +30,6 @@ import static kr.gg.lol.domain.summoner.dto.LeagueDto.toDto;
 @RequiredArgsConstructor
 public class SummonerService {
 
-    private final Rest rest;
     private final SummonerRepository summonerRepository;
     private final SummonerJdbcRepository summonerJdbcRepository;
     private final LeagueRepository leagueRepository;
@@ -50,7 +49,7 @@ public class SummonerService {
                     .expand(name)
                     .toUri();
 
-            ResponseEntity<SummonerDto> response = rest.get(uri, SummonerDto.class);
+            ResponseEntity<SummonerDto> response = Rest.get(uri, SummonerDto.class);
             saveSummoner(response);
             return response;
         }
@@ -70,7 +69,7 @@ public class SummonerService {
                     .expand(id)
                     .toUri();
 
-            ResponseEntity<List<LeagueDto>> response = rest.get(uri, new ParameterizedTypeReference<List<LeagueDto>>() {});
+            ResponseEntity<List<LeagueDto>> response = Rest.get(uri, new ParameterizedTypeReference<List<LeagueDto>>() {});
             saveLeagues(response);
             return response;
         }
