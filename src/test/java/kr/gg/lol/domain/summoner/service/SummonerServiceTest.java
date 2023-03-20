@@ -1,5 +1,6 @@
 package kr.gg.lol.domain.summoner.service;
 
+import kr.gg.lol.common.util.Rest;
 import kr.gg.lol.domain.summoner.dto.LeagueDto;
 import kr.gg.lol.domain.summoner.dto.SummonerDto;
 import kr.gg.lol.domain.summoner.entity.Summoner;
@@ -22,16 +23,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 
 
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class SummonerServiceTest {
-
     @InjectMocks
     private SummonerService summonerService;
-
     @Mock
     private SummonerRepository summonerRepository;
     @Mock
@@ -39,32 +39,21 @@ class SummonerServiceTest {
     @Mock
     private LeagueRepository leagueRepository;
 
-    @BeforeEach
-    void setUp(){
-        ReflectionTestUtils.setField(summonerService, "key", "RGAPI-4479766b-4ee2-4329-959b-826f8b1f9e72");
-    }
-
     @Test
     void testGetSummonerByName() throws Exception{
         final String name = "Hide on bush";
-
         doReturn(Optional.empty()).when(summonerRepository).findByName(name);
         ResponseEntity<SummonerDto> result = summonerService.getSummonerByName(name);
-
         assertEquals(result.getStatusCodeValue(), 200);
         assertEquals(result.getBody().getName(), name);
-
     }
 
     @Test
     @DisplayName("존재하지 않는 소환사를 검색했을 때")
     void notExistSummoner() throws Exception{
         final String name = "ㅇ라ㅣ헐이ㅏ헢";
-
         doReturn(Optional.empty()).when(summonerRepository).findByName(name);
-        ResponseEntity<SummonerDto> result = summonerService.getSummonerByName(name);
-        assertEquals(result.getStatusCodeValue(), 404);
-
+        assertThrows(RuntimeException.class, () -> summonerService.getSummonerByName(name));
     }
 
     @Test

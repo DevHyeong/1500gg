@@ -20,6 +20,6 @@ public class PropertyTest {
 
         }
         String key = properties.getProperty("database.username");
-        assertEquals("root", key);
+        assertEquals("admin", key);
     }
 }

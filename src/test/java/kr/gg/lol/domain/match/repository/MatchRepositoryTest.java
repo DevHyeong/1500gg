@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @DataJpaTest
 class MatchRepositoryTest {
-
     @Autowired
     MatchRepository matchRepository;
 
