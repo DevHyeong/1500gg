@@ -1,14 +1,19 @@
 package kr.gg.lol.config;
 
+import kr.gg.lol.common.constant.DatabaseConstants;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.H2Dialect;
+import org.hibernate.dialect.MySQL8Dialect;
 import org.hibernate.dialect.MySQLDialect;
 
 import java.sql.Driver;
+import java.util.Properties;
 import java.util.TimeZone;
+
+import static kr.gg.lol.common.constant.DatabaseConstants.*;
 
 @Slf4j
 @Getter
@@ -16,20 +21,20 @@ public enum Database {
 
     MYSQL(com.mysql.cj.jdbc.Driver.class, MySQLDialect.class, "jdbc:mysql://%s?characterEncoding=utf8&allowMultiQueries=true&serverTimezone=%s&useSSL=false"){
         @Override
-        protected void setupVariants(BasicDataSource dataSource) {
-            String format = String.format(getUrlTemplate(), "localhost:3306/lol", TimeZone.getDefault().getID());
+        protected void setupVariants(BasicDataSource dataSource, Properties properties) {
+            String format = String.format(getUrlTemplate(), properties.getProperty(DATABASE_URL), TimeZone.getDefault().getID());
             dataSource.setUrl(format);
-            dataSource.setUsername("root");
-            dataSource.setPassword("root");
+            dataSource.setUsername(properties.getProperty(DATABASE_USERNAME));
+            dataSource.setPassword(properties.getProperty(DATABASE_PASSWORD));
         }
     },
 
-    H2(org.h2.Driver.class, H2Dialect.class, "jdbc:h2:%s/db/h2"){
+    H2(org.h2.Driver.class, H2Dialect.class, "jdbc:h2:tcp:/db/h2"){
         @Override
-        protected void setupVariants(BasicDataSource dataSource) {
+        protected void setupVariants(BasicDataSource dataSource, Properties properties) {
             dataSource.setUrl(getUrlTemplate());
-            dataSource.setUsername("admin");
-            dataSource.setPassword("admin");
+            dataSource.setUsername(properties.getProperty(DATABASE_USERNAME));
+            dataSource.setPassword(properties.getProperty(DATABASE_PASSWORD));
         }
     };
 
@@ -48,18 +53,14 @@ public enum Database {
         this.urlTemplate = urlTemplate;
     }
 
-    protected abstract void setupVariants(BasicDataSource dataSource);
+    protected abstract void setupVariants(BasicDataSource dataSource, Properties properties);
 
-    public static Database getDatabase(String[] profiles){
-        for(String profile : profiles){
-            if(profile.equals("test"))
-                return H2;
-        }
-        return MYSQL;
+    public static Database getDatabase(String value){
+        return Database.valueOf(value);
     }
 
-    public void setUp(BasicDataSource dataSource){
-        setupVariants(dataSource);
+    public void setUp(BasicDataSource dataSource, Properties properties){
+        setupVariants(dataSource, properties);
         setupCommon(dataSource);
     }
 
