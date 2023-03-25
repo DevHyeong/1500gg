@@ -1,6 +1,5 @@
 
-# 리그오브레전드 전적사이트
-##(Like fow.kr, OP.GG)
+# 리그오브레전드 전적사이트 (feat. fow.kr, OP.GG)
 
 
 
