@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class SummonerJdbcRepository {
 
-    static final String LEAGE_TABLE = "LEAGUE";
+    static final String TABLE_LEAGUE = "league";
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public void bulkInsert(List<League> leagues){
@@ -26,7 +26,7 @@ public class SummonerJdbcRepository {
                 ":tier, :rank, :leaguePoints, :wins, :losses, :updatedAt) ON DUPLICATE KEY " +
                "UPDATE league_id = :leagueId, summoner_name = :summonerName, tier = :tier, rank1 = :rank, " +
                "league_points = :leaguePoints, wins = :wins, losses = :losses, updated_at = :updatedAt"
-               , LEAGE_TABLE);
+               , TABLE_LEAGUE);
 
        SqlParameterSource[] params = leagues
                 .stream()

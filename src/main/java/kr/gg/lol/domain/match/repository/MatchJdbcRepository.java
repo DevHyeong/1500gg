@@ -26,13 +26,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatchJdbcRepository {
 
-    static final String TABLE_MATCHES = "MATCHES";
-    static final String TABLE_MATCH = "MATCH_INFO";
-    static final String TABLE_PARTICIPANT = "PARTICIPANT";
-    static final String TABLE_TEAM = "TEAM";
-    static final String TABLE_BAN = "BAN";
-    static final String TABLE_PERK_PRIMARY = "PERK_PRIMARY";
-    static final String TABLE_PERK_SUB = "PERK_SUB";
+    static final String TABLE_MATCHES = "matches";
+    static final String TABLE_MATCH = "match_info";
+    static final String TABLE_PARTICIPANT = "participant";
+    static final String TABLE_TEAM = "team";
+    static final String TABLE_BAN = "ban";
+    static final String TABLE_PERK_PRIMARY = "perk_primary";
+    static final String TABLE_PERK_SUB = "perk_sub";
 
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
