@@ -59,7 +59,7 @@ public class SummonerService {
     @Cacheable(value = LEAGUE_ID, key = "#id")
     public ResponseEntity getLeagueById(String id){
         Optional<List<League>> leagues = leagueRepository.findBySummonerId(id);
-        if(leagues.isEmpty()){
+        if(leagues.isEmpty() || leagues.get().size() < 1){
 
             URI uri = UriComponentsBuilder
                     .fromUriString("https://kr.api.riotgames.com")
