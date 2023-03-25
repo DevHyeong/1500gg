@@ -50,5 +50,18 @@ public class LeagueDto {
         return leagueDtos;
     }
 
-
+    @Override
+    public String toString() {
+        return "LeagueDto{" +
+                "leagueId='" + leagueId + '\'' +
+                ", summonerId='" + summonerId + '\'' +
+                ", summonerName='" + summonerName + '\'' +
+                ", queueType='" + queueType + '\'' +
+                ", tier='" + tier + '\'' +
+                ", rank='" + rank + '\'' +
+                ", leaguePoints=" + leaguePoints +
+                ", wins=" + wins +
+                ", losses=" + losses +
+                '}';
+    }
 }
