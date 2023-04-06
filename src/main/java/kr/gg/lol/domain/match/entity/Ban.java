@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "ban")
 @IdClass(BanPk.class)
@@ -31,16 +28,14 @@ public class Ban {
 
     private int championId;
 
-    public static Ban toEntity(String matchId, int teamId, BanDto banDto){
+    public Ban(){
 
-        return builder()
-                .matchId(matchId)
-                .teamId(teamId)
-                .pickTurn(banDto.getPickTurn())
-                .championId(banDto.getChampionId())
-
-                .build();
     }
 
-
+    public Ban(String matchId, int teamId, BanDto source){
+        this.matchId = matchId;
+        this.teamId = teamId;
+        this.championId = source.getChampionId();
+        this.pickTurn = source.getPickTurn();
+    }
 }

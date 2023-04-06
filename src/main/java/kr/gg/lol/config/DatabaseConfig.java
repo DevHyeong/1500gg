@@ -33,16 +33,13 @@ public class DatabaseConfig {
 
     private Properties initProperties(){
         Properties properties = new Properties();
-        String environment = "prod";
+        String environment = "dev";
         for(String profile : env.getActiveProfiles()){
-            if(profile.equals("dev"))
-                environment = "dev";
+            if(profile.equals("prod"))
+                environment = "prod";
 
         }
-
-        System.out.println(env.getActiveProfiles().toString());
-
-        log.debug(environment);
+        log.info(environment);
         try(InputStream inputStream = new ClassPathResource(String.format("/%s/database.conf", environment))
                 .getInputStream()){
             properties.load(inputStream);

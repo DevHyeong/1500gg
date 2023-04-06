@@ -14,4 +14,6 @@ public class SelectionsDto {
     private int var2;
     private int var3;
 
+
+
 }

@@ -12,14 +12,10 @@ import java.util.Map;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "perk_primary")
 @IdClass(ParticipantPk.class)
 public class PerkPrimary {
-
     @Transient
     public static final String description = "primaryStyle";
 
@@ -52,30 +48,32 @@ public class PerkPrimary {
     private int var42;
     private int var43;
 
-
-    public static PerkPrimary toEntity(ParticipantPk participantPk, StylesDto stylesDto){
-
-        Map<String, Object> map = new HashMap<>();
-        int i = 1;
-
-        for(SelectionsDto selectionsDto : stylesDto.getSelections()){
-            map.put("perk" + i , selectionsDto.getPerk());
-            map.put("var" + i + "1" , selectionsDto.getVar1());
-            map.put("var" + i + "2" , selectionsDto.getVar2());
-            map.put("var" + i + "3" ,  selectionsDto.getVar3());
-
-            i++;
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        PerkPrimary perkPrimary = objectMapper.convertValue(map, PerkPrimary.class);
-
-        perkPrimary.setStyle(stylesDto.getStyle());
-        perkPrimary.setMatchId(participantPk.getMatchId());
-        perkPrimary.setParticipantId(participantPk.getParticipantId());
-
-        return perkPrimary;
+    public PerkPrimary(){
 
     }
+    public PerkPrimary(ParticipantPk participantPk, StylesDto stylesDto){
+        int i = 1;
+        for(SelectionsDto selectionsDto : stylesDto.getSelections()){
+            try {
+                getClass().getDeclaredField("perk" + i)
+                        .set(this, selectionsDto.getPerk());
+                getClass().getDeclaredField("var" + i + "1")
+                        .set(this, selectionsDto.getVar1());
+                getClass().getDeclaredField("var" + i + "2")
+                        .set(this, selectionsDto.getVar2());
+                getClass().getDeclaredField("var" + i + "3")
+                        .set(this, selectionsDto.getVar3());
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+            i++;
+        }
+        this.style = stylesDto.getStyle();
+        this.matchId = participantPk.getMatchId();
+        this.participantId = participantPk.getParticipantId();
+    }
+
 
 }

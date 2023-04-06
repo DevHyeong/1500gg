@@ -11,10 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "perk_sub")
 @IdClass(ParticipantPk.class)
@@ -41,29 +37,31 @@ public class PerkSub {
     private int var22;
     private int var23;
 
+    public PerkSub(){
 
-    public static PerkSub toEntity(ParticipantPk participantPk, StylesDto stylesDto){
+    }
 
-        Map<String, Object> map = new HashMap<>();
+    public PerkSub(ParticipantPk participantPk, StylesDto stylesDto){
         int i = 1;
-
         for(SelectionsDto selectionsDto : stylesDto.getSelections()){
-            map.put("perk" + i , selectionsDto.getPerk());
-            map.put("var" + i + "1" , selectionsDto.getVar1());
-            map.put("var" + i + "2" , selectionsDto.getVar2());
-            map.put("var" + i + "3" ,  selectionsDto.getVar3());
-
+            try {
+                getClass().getDeclaredField("perk" + i)
+                        .set(this, selectionsDto.getPerk());
+                getClass().getDeclaredField("var" + i + "1")
+                        .set(this, selectionsDto.getVar1());
+                getClass().getDeclaredField("var" + i + "2")
+                        .set(this, selectionsDto.getVar2());
+                getClass().getDeclaredField("var" + i + "3")
+                        .set(this, selectionsDto.getVar3());
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
             i++;
         }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        PerkSub perkSub = objectMapper.convertValue(map, PerkSub.class);
-
-        perkSub.setStyle(stylesDto.getStyle());
-        perkSub.setMatchId(participantPk.getMatchId());
-        perkSub.setParticipantId(participantPk.getParticipantId());
-
-        return perkSub;
-
+        this.style = stylesDto.getStyle();
+        this.matchId = participantPk.getMatchId();
+        this.participantId = participantPk.getParticipantId();
     }
 }

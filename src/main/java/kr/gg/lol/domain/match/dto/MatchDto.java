@@ -1,18 +1,22 @@
 package kr.gg.lol.domain.match.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import kr.gg.lol.domain.match.entity.Match;
+import lombok.*;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class MatchDto {
 
     private MetaDataDto metadata;
     private InfoDto info;
+
+    public MatchDto(){
+
+    }
+
+    public MatchDto(Match source){
+        this.metadata = new MetaDataDto(source.getId());
+        this.info = new InfoDto(source);
+    }
 
 }

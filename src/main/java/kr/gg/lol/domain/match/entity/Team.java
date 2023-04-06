@@ -13,11 +13,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "team")
 @IdClass(TeamPk.class)
@@ -52,34 +50,27 @@ public class Team {
     })
     private List<Ban> bans;
 
-    public static Team toEntity(String matchId, TeamDto dto){
-
-        List<BanDto> banDtos = dto.getBans();
-        List<Ban> bans = new ArrayList<>();
-
-        banDtos.forEach(e-> {
-            Ban ban = Ban.toEntity(matchId, dto.getTeamId(), e);
-            bans.add(ban);
-        });
-
-        return builder()
-                .matchId(matchId)
-                .firstBaron(dto.getObjectives().getBaron().isFirst())
-                .killsBaron(dto.getObjectives().getBaron().getKills())
-                .firstChampion(dto.getObjectives().getChampion().isFirst())
-                .killsChampion(dto.getObjectives().getChampion().getKills())
-                .firstDragon(dto.getObjectives().getDragon().isFirst())
-                .killsDragon(dto.getObjectives().getDragon().getKills())
-                .firstInhibitor(dto.getObjectives().getInhibitor().isFirst())
-                .killsInhibitor(dto.getObjectives().getInhibitor().getKills())
-                .firstRiftHerald(dto.getObjectives().getRiftHerald().isFirst())
-                .killsRiftHerald(dto.getObjectives().getRiftHerald().getKills())
-                .teamId(dto.getTeamId())
-                .win(dto.isWin())
-                .bans(bans)
-                .build();
+    public Team(){
 
     }
 
-
+    public Team(String matchId, TeamDto source){
+        this.matchId = matchId;
+        this.teamId = source.getTeamId();
+        this.win = source.isWin();
+        this.firstBaron = source.getObjectives().getBaron().isFirst();
+        this.killsBaron = source.getObjectives().getBaron().getKills();
+        this.firstChampion = source.getObjectives().getChampion().isFirst();
+        this.killsChampion = source.getObjectives().getChampion().getKills();
+        this.firstDragon = source.getObjectives().getDragon().isFirst();
+        this.killsDragon = source.getObjectives().getDragon().getKills();
+        this.firstInhibitor = source.getObjectives().getInhibitor().isFirst();
+        this.killsInhibitor = source.getObjectives().getInhibitor().getKills();
+        this.firstRiftHerald = source.getObjectives().getRiftHerald().isFirst();
+        this.killsRiftHerald = source.getObjectives().getRiftHerald().getKills();
+        this.bans = source.getBans()
+                .stream()
+                .map(e-> new Ban(matchId, source.getTeamId(), e))
+                .collect(Collectors.toList());
+    }
 }

@@ -23,7 +23,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static kr.gg.lol.common.constant.CacheConstants.MATCH;
 import static kr.gg.lol.common.constant.CacheConstants.MATCHES;
 
@@ -84,7 +86,7 @@ public class MatchService {
             saveMatch(response.getBody());
             return response;
         }
-        return ResponseEntity.ok(toDto(match.get()));
+        return ResponseEntity.ok(new MatchDto(match.get()));
 
     }
 
@@ -107,7 +109,7 @@ public class MatchService {
     }
 
     private void saveMatch(MatchDto dto){
-        Match match = Match.toEntity(dto);
+        Match match = new Match(dto);
         matchJdbcRepository.saveWithoutRelation(match);
         matchJdbcRepository.bulkInsertParticipants(match.getParticipants());
         matchJdbcRepository.bulkInsertTeams(match.getTeams());
@@ -128,78 +130,5 @@ public class MatchService {
         });
 
     }
-
-    private MatchDto toDto(Match match){
-
-        MetaDataDto metaDataDto = MetaDataDto.builder()
-                .matchId(match.getId())
-                .build();
-
-        List<ParticipantDto> participantDtos = new ArrayList<>();
-        List<TeamDto> teamDtos = new ArrayList<>();
-
-        for(Participant p : match.getParticipants())
-            participantDtos.add(ParticipantDto.toDto(p));
-
-        for(Team t : match.getTeams()){
-
-            TeamDto teamDto = TeamDto.toDto(t);
-            List<BanDto> banDtos = new ArrayList<>();
-
-            int kills = match.getParticipants().stream().filter(e-> e.getTeamId() == t.getTeamId())
-                    .mapToInt(Participant::getKills)
-                    .sum();
-
-
-            for(Ban b : t.getBans())
-                banDtos.add(BanDto.toDto(b));
-
-
-            ObjectiveDto baron = new ObjectiveDto(t.isFirstBaron(), t.getKillsBaron());
-            ObjectiveDto champion = new ObjectiveDto(t.isFirstChampion(), t.getKillsChampion());
-            ObjectiveDto dragon = new ObjectiveDto(t.isFirstDragon(), t.getKillsDragon());
-            ObjectiveDto inhibitor = new ObjectiveDto(t.isFirstInhibitor(), t.getKillsInhibitor());
-            ObjectiveDto riftHerald = new ObjectiveDto(t.isFirstRiftHerald(), t.getKillsRiftHerald());
-            ObjectiveDto tower = new ObjectiveDto(t.isFirstTower(), t.getKillsTower());
-
-            ObjectivesDto objectivesDto = new ObjectivesDto(baron, champion, dragon, inhibitor, riftHerald, tower);
-
-            teamDto.setBans(banDtos);
-            teamDto.setObjectives(objectivesDto);
-            teamDto.setKillsChampion(kills);
-
-            teamDtos.add(teamDto);
-        }
-
-
-
-
-        InfoDto infoDto = InfoDto.builder()
-                .gameCreation(match.getGameCreation())
-                .gameDuration(match.getGameDuration())
-                .gameEndTimestamp(match.getGameEndTimestamp())
-                .gameId(match.getGameId())
-                .gameMode(match.getGameMode())
-                .gameName(match.getGameName())
-                .gameStartTimestamp(match.getGameStartTimestamp())
-                .gameType(match.getGameType())
-                .gameVersion(match.getGameVersion())
-                .mapId(match.getMapId())
-                .platformId(match.getPlatformId())
-                .queueId(match.getQueueId())
-                .participants(participantDtos)
-                .teams(teamDtos)
-                .tournamentCode(match.getTournamentCode())
-                .build();
-
-
-        return MatchDto.builder()
-                .info(infoDto)
-                .metadata(metaDataDto)
-                .build();
-
-    }
-
-
 
 }
