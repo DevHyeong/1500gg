@@ -19,6 +19,7 @@ dependencies {
 	implementation group: "mysql", name: "mysql-connector-java", version: "8.0.13"
 	implementation group: "com.h2database", name: "h2", version: "1.4.197"
 	implementation group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.14.0'
 
 	compileOnly 'org.projectlombok:lombok'
 

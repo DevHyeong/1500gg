@@ -16,6 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -57,6 +58,10 @@ public class MatchService {
 
             ResponseEntity<List<String>> response = Rest.get(uri, new ParameterizedTypeReference<List<String>>() {});
             matchJdbcRepository.bulkInsertMatches(puuid, response.getBody());
+
+
+
+
             return response;
         }
 
@@ -70,10 +75,10 @@ public class MatchService {
      * */
 
     @Cacheable(value = MATCH, key = "#matchId")
+    @Transactional
     public ResponseEntity getMatchByMatchId(String matchId){
         Optional<Match> match = matchRepository.findById(matchId);
         if(match.isEmpty()){
-
             URI uri = UriComponentsBuilder
                     .fromUriString("https://asia.api.riotgames.com")
                     .path("/lol/match/v5/matches/{matchId}")
@@ -81,9 +86,28 @@ public class MatchService {
                     .build()
                     .expand(matchId)
                     .toUri();
-
             ResponseEntity<MatchDto> response = Rest.get(uri, MatchDto.class);
-            saveMatch(response.getBody());
+            //saveMatch(response.getBody());
+            Match entity = new Match(response.getBody());
+            matchJdbcRepository.saveWithoutRelation(entity);
+            matchJdbcRepository.bulkInsertParticipants(entity.getParticipants());
+            matchJdbcRepository.bulkInsertTeams(entity.getTeams());
+
+            List<Ban> bans = new ArrayList<>();
+            entity.getTeams().stream().forEach(e-> {
+                bans.addAll(e.getBans());
+            });
+
+            matchJdbcRepository.bulkInsertBans(bans);
+
+            response.getBody().getInfo().getTeams().forEach(t-> {
+
+                int kills = response.getBody().getInfo().getParticipants().stream().filter(p-> t.getTeamId() == p.getTeamId())
+                        .mapToInt(ParticipantDto::getKills)
+                        .sum();
+                t.setKillsChampion(kills);
+            });
+
             return response;
         }
         return ResponseEntity.ok(new MatchDto(match.get()));

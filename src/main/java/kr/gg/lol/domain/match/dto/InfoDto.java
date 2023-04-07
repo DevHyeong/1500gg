@@ -1,11 +1,14 @@
 package kr.gg.lol.domain.match.dto;
 
+import kr.gg.lol.common.util.DateTimeUtils;
 import kr.gg.lol.domain.match.entity.Match;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static kr.gg.lol.common.util.DateTimeUtils.unixTimestampOf;
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Getter
@@ -28,12 +31,14 @@ public class InfoDto {
 
     private List<ParticipantDto> participants;
     private List<TeamDto> teams;
-
     public InfoDto(){
 
     }
     public InfoDto(Match source){
         copyProperties(source, this);
+        this.gameCreation = unixTimestampOf(source.getGameCreation());
+        this.gameStartTimestamp = unixTimestampOf(source.getGameStartTime());
+        this.gameEndTimestamp = unixTimestampOf(source.getGameEndTime());
         this.participants = source.getParticipants()
                 .stream()
                 .map(e-> new ParticipantDto(e))

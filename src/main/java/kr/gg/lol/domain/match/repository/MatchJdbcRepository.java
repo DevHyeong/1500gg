@@ -2,6 +2,8 @@ package kr.gg.lol.domain.match.repository;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import kr.gg.lol.common.util.DateTimeUtils;
 import kr.gg.lol.domain.match.dto.TeamDto;
 import kr.gg.lol.domain.match.entity.*;
 import kr.gg.lol.domain.match.entity.pk.ParticipantPk;
@@ -65,10 +67,12 @@ public class MatchJdbcRepository {
                 "game_version = :gameVersion, map_id = :mapId, platform_id = :platformId, queue_id = :queueId, tournament_code = :tournamentCode", TABLE_MATCH);
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         Map<String, Object> map = objectMapper.convertValue(match, Map.class);
-
+        map.put("gameCreation", match.getGameCreation());
+        map.put("gameStartTimestamp", match.getGameStartTime());
+        map.put("gameEndTimestamp", match.getGameEndTime());
         namedParameterJdbcTemplate.update(sql, map);
-
     }
 
     public void bulkInsertMatches(String puuid, List<String> matchIds){
@@ -152,8 +156,6 @@ public class MatchJdbcRepository {
                 .toArray(SqlParameterSource[]::new);
 
         namedParameterJdbcTemplate.batchUpdate(sql, params);
-
-
         bulkInsertPerkPrimary(participants.stream().map(e-> e.getPerkPrimary()).collect(Collectors.toList()));
         bulkInsertPerkSub(participants.stream().map(e-> e.getPerkSub()).collect(Collectors.toList()));
 

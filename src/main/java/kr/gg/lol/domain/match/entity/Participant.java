@@ -3,16 +3,14 @@ package kr.gg.lol.domain.match.entity;
 import kr.gg.lol.domain.match.dto.ParticipantDto;
 import kr.gg.lol.domain.match.dto.StylesDto;
 import kr.gg.lol.domain.match.entity.pk.ParticipantPk;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "participant")
 @IdClass(ParticipantPk.class)
@@ -173,6 +171,7 @@ public class Participant {
     public Participant(String matchId, ParticipantDto source){
         copyProperties(source, this);
         ParticipantPk participantPk = new ParticipantPk(matchId, source.getParticipantId());
+        this.matchId = matchId;
         this.perkPrimary = source.getPerks().getStyles()
                 .stream()
                 .filter(e-> e.getDescription().equals("primaryStyle"))
