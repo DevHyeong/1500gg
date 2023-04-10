@@ -38,3 +38,4 @@ out/
 
 ## conf
 !**/src/main/resources/prod/
+*.conf
