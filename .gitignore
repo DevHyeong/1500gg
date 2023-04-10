@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ## conf
-!**/src/main/resource/prod/
+!**/src/main/resources/prod/

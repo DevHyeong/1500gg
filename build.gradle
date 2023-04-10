@@ -1,3 +1,9 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.7'
@@ -20,13 +26,28 @@ dependencies {
 	implementation group: "com.h2database", name: "h2", version: "1.4.197"
 	implementation group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
 	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.14.0'
+	implementation group: 'com.querydsl', name: 'querydsl-jpa', version: queryDslVersion
+	implementation group: 'com.querydsl', name: 'querydsl-apt', version: queryDslVersion
+	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
 	compileOnly 'org.projectlombok:lombok'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jpa'
+	annotationProcessor "javax.persistence:javax.persistence-api"
+	annotationProcessor "javax.annotation:javax.annotation-api"
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+		}
+	}
 }
 
 tasks.named('test') {
