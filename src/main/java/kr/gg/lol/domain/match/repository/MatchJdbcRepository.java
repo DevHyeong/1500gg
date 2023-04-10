@@ -36,7 +36,6 @@ public class MatchJdbcRepository {
     static final String TABLE_PERK_PRIMARY = "perk_primary";
     static final String TABLE_PERK_SUB = "perk_sub";
 
-
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 
@@ -57,21 +56,21 @@ public class MatchJdbcRepository {
     public void saveWithoutRelation(Match match){
 
         String sql = String.format("INSERT INTO %s" +
-                " (id, game_creation, game_duration, game_end_timestamp, game_id, game_mode, game_name, game_start_timestamp," +
+                " (id, game_creation, game_duration, game_end_time, game_id, game_mode, game_name, game_start_time," +
                 "game_type, game_version, map_id, platform_id, queue_id, tournament_code) " +
-                "VALUES (:id, :gameCreation, :gameDuration, :gameEndTimestamp, :gameId, :gameMode," +
-                ":gameName, :gameStartTimestamp, :gameType, :gameVersion, :mapId, :platformId, " +
+                "VALUES (:id, :gameCreation, :gameDuration, :gameEndTime, :gameId, :gameMode," +
+                ":gameName, :gameStartTime, :gameType, :gameVersion, :mapId, :platformId, " +
                 ":queueId, :tournamentCode) ON DUPLICATE KEY " +
-                "UPDATE game_creation = :gameCreation, game_duration = :gameDuration, game_end_timestamp = :gameEndTimestamp, game_id = :gameId, " +
-                "game_mode = :gameMode, game_name = :gameName, game_start_timestamp = :gameStartTimestamp, game_type = :gameType, " +
+                "UPDATE game_creation = :gameCreation, game_duration = :gameDuration, game_end_time = :gameEndTime, game_id = :gameId, " +
+                "game_mode = :gameMode, game_name = :gameName, game_start_time = :gameStartTime, game_type = :gameType, " +
                 "game_version = :gameVersion, map_id = :mapId, platform_id = :platformId, queue_id = :queueId, tournament_code = :tournamentCode", TABLE_MATCH);
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         Map<String, Object> map = objectMapper.convertValue(match, Map.class);
         map.put("gameCreation", match.getGameCreation());
-        map.put("gameStartTimestamp", match.getGameStartTime());
-        map.put("gameEndTimestamp", match.getGameEndTime());
+        map.put("gameStartTime", match.getGameStartTime());
+        map.put("gameEndTime", match.getGameEndTime());
         namedParameterJdbcTemplate.update(sql, map);
     }
 

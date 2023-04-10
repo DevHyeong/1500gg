@@ -17,9 +17,7 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 @AllArgsConstructor
 @Builder
 public class ParticipantDto {
-
     private PerksDto perks;
-
     private int assists;
     private int baronKills;
     private int bountyLevel;

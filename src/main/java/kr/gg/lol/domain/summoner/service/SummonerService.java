@@ -1,6 +1,7 @@
 package kr.gg.lol.domain.summoner.service;
 
 import kr.gg.lol.common.util.Rest;
+import kr.gg.lol.common.util.Uri;
 import kr.gg.lol.domain.summoner.dto.LeagueDto;
 import kr.gg.lol.domain.summoner.dto.SummonerDto;
 import kr.gg.lol.domain.summoner.entity.League;
@@ -13,12 +14,14 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static kr.gg.lol.common.constant.CacheConstants.LEAGUE_ID;
 import static kr.gg.lol.common.constant.CacheConstants.SUMMONER_NAME;
@@ -35,22 +38,15 @@ public class SummonerService {
     private final LeagueRepository leagueRepository;
 
     @Cacheable(value = SUMMONER_NAME, key = "#name")
+    @Transactional
     public ResponseEntity getSummonerByName(String name){
 
         Optional<Summoner> summoner = summonerRepository.findByName(name);
 
         if(summoner.isEmpty()){
-
-            URI uri = UriComponentsBuilder
-                    .fromUriString("https://kr.api.riotgames.com")
-                    .path("/lol/summoner/v4/summoners/by-name/{name}")
-                    .encode()
-                    .build()
-                    .expand(name)
-                    .toUri();
-
-            ResponseEntity<SummonerDto> response = Rest.get(uri, SummonerDto.class);
-            saveSummoner(response);
+            ResponseEntity<SummonerDto> response = Rest.get(Uri.summonerUri(name), SummonerDto.class);
+            Summoner entity = new Summoner(response.getBody());
+            summonerRepository.save(entity);
             return response;
         }
         return ResponseEntity.ok(SummonerDto.toDto(summoner.get()));
@@ -60,72 +56,15 @@ public class SummonerService {
     public ResponseEntity getLeagueById(String id){
         Optional<List<League>> leagues = leagueRepository.findBySummonerId(id);
         if(leagues.isEmpty() || leagues.get().size() < 1){
-
-            URI uri = UriComponentsBuilder
-                    .fromUriString("https://kr.api.riotgames.com")
-                    .path("/lol/league/v4/entries/by-summoner/{id}")
-                    .encode()
-                    .build()
-                    .expand(id)
-                    .toUri();
-
-            ResponseEntity<List<LeagueDto>> response = Rest.get(uri, new ParameterizedTypeReference<List<LeagueDto>>() {});
-            saveLeagues(response);
+            ResponseEntity<List<LeagueDto>> response = Rest.get(Uri.leagueUri(id), new ParameterizedTypeReference<List<LeagueDto>>() {});
+            summonerJdbcRepository.bulkInsert(
+                    response.getBody()
+                    .stream()
+                    .map(e-> new League(e))
+                    .collect(Collectors.toList()));
             return response;
         }
         return ResponseEntity.ok(toDto(leagues.get()));
     }
-
-    private void saveSummoner(ResponseEntity<SummonerDto> response){
-        checkNotNull(response);
-
-        SummonerDto dto = response.getBody();
-        Summoner summoner = Summoner.builder()
-                .accountId(dto.getAccountId())
-                .puuid(dto.getPuuid())
-                .name(dto.getName())
-                .profileIconId(dto.getProfileIconId())
-                .summonerLevel(dto.getSummonerLevel())
-                .id(dto.getId())
-                .build();
-
-        summonerRepository.save(summoner);
-
-    }
-
-    private void saveLeagues(ResponseEntity<List<LeagueDto>> response){
-
-        checkNotNull(response);
-
-        List<LeagueDto> leagueDtos = response.getBody();
-        List<League> leagues = new ArrayList<>();
-        for(LeagueDto dto : leagueDtos){
-
-            League league = League.builder()
-                    .queueType(dto.getQueueType())
-                    .summonerId(dto.getSummonerId())
-                    .summonerName(dto.getSummonerName())
-                    .leagueId(dto.getLeagueId())
-                    .rank(dto.getRank())
-                    .tier(dto.getTier())
-                    .wins(dto.getWins())
-                    .losses(dto.getLosses())
-                    .build();
-
-            leagues.add(league);
-        }
-        summonerJdbcRepository.bulkInsert(leagues);
-
-    }
-
-
-
-
-
-
-
-
-
-
 
 }

@@ -38,13 +38,7 @@ class RestTest {
     @Test
     void testGetParameterizedTypeReference() throws Exception {
         final String id = "2pBOKMjspFzaFFfY6arc3I_sZ-xPWVbrtumRjHfQpwtS2_8";
-        URI uri = UriComponentsBuilder
-                .fromUriString("https://kr.api.riotgames.com")
-                .path("/lol/league/v4/entries/by-summoner/{id}")
-                .encode()
-                .build()
-                .expand(id)
-                .toUri();
+        URI uri = Uri.leagueUri(id);
         ResponseEntity<List<LeagueDto>> result = Rest.get(uri, new ParameterizedTypeReference<List<LeagueDto>>() {});
         assertEquals(result.getStatusCodeValue(), 200);
     }
@@ -52,14 +46,7 @@ class RestTest {
     @Test
     void testExpected404() throws Exception{
         final String name = "fkdsjflurk,f";
-        URI uri = UriComponentsBuilder
-                .fromUriString("https://kr.api.riotgames.com")
-                .path("/lol/summoner/v4/summoners/by-name/{name}")
-                .encode()
-                .build()
-                .expand(name)
-                .toUri();
-
+        URI uri = Uri.summonerUri(name);
         assertThrows(RuntimeException.class, ()-> Rest.get(uri, SummonerDto.class));
     }
 

@@ -9,7 +9,7 @@ import {champUrl, itemUrl, toKda, getTimeStamp, getDate} from './Common';
 
 
 
-export default ({ puuId, matchId, rune, spell }) =>{
+export default ({ puuId, data}) =>{
     
 
     const [match, setMatch] = useState();
@@ -20,9 +20,9 @@ export default ({ puuId, matchId, rune, spell }) =>{
 
     const getMatch = async () =>{
         try{
-            const response = await axios.get("/api/match/" + matchId);
-            const metadata = response.data.metadata;
-            const {gameMode, gameType, participants, teams} = response.data.info;
+            //const response = await axios.get("/api/match/" + matchId);
+            const metadata = data.metadata;
+            const {gameMode, gameType, participants, teams} = data.info;
             let index;
 
 
@@ -39,7 +39,7 @@ export default ({ puuId, matchId, rune, spell }) =>{
             });
            
             setParticipant(participants[index]);
-            setMatch(response.data);
+            setMatch(data);
         }catch(e){}
     }
 
@@ -67,14 +67,10 @@ export default ({ puuId, matchId, rune, spell }) =>{
 
     }
 
-
-
-
-
     useEffect(() =>{
         getMatch();
 
-    },[matchId])
+    },[data])
 
 
     useEffect(() => {
@@ -83,22 +79,16 @@ export default ({ puuId, matchId, rune, spell }) =>{
 
     
     return (
-
         <>
-            {
-                
+            {    
                 (match && participant) &&
-                <div className={ (participant.win ? "border-sky-300 bg-sky-300": "border-red-300 bg-red-300") + " flex justify-start h-24 items-center shadow-2xl border-solid border-1 py-4 px-4 mb-2"}>
-        
-                    
+                <div className={ (participant.win ? "border-sky-300 bg-sky-300": "border-red-300 bg-red-300") + " flex justify-start h-24 items-center shadow-2xl border-solid border-1 py-4 px-4 mb-2"}>       
                     <div className="text-center w-4">
                         <p className="text-sm">{participant.win ? "승" : "패"}</p>
                     </div>
                     <div className="mx-5 text-center w-12">
                         <p className="text-sm">{getGameType(match.info.queueId)}</p>
                     </div>
-                   
-                       
                     <div className="text-center mr-3 w-16 text-sm">
                         <p className="timestamp" 
                         onMouseOver={(e)=>{

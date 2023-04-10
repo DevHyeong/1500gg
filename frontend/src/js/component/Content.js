@@ -12,17 +12,13 @@ const Content = ({ params }) =>{
     const [summoner, setSummoner] = useState();
     const progress = useSelector(state => state.progress);
 
-
     const getSummoner = async (name) =>{
-        
-        set();
-        
+        set();        
         try{
             const response = await axios.get("/api/summoner/" + name);
             setSummoner(response.data);
         }catch(e){console.error(e);}
         
-
     }
 
     const handleClick = () =>{
@@ -34,15 +30,13 @@ const Content = ({ params }) =>{
     const renewal = async () =>{
         
         try{
-            const response = await progressAxios.post("/api/renewal/" + summoner.name);
+            const response = await axios.post("/api/renewal", {
+                name : summoner.name
+            });
 
             if(response.status === 200){
-
-
-
+                
             }
-
-
             //setSummoner(response.data);
         }catch(e){}
         
@@ -50,8 +44,6 @@ const Content = ({ params }) =>{
     }
 
     useEffect(() =>{
-       
-
         if(params.name){
             getSummoner(params.name);
         }
@@ -79,7 +71,6 @@ const Content = ({ params }) =>{
                         <p className="text-xl font-bold">{summoner.name}</p>
                         <p className="text-sm">Lv.{summoner.summonerLevel}</p>
                         <div className="relative mt-2">
-                            <ProgressBar progress={progress}/>
                             <button type="button" className="hover:bg-blue-400 bg-blue-500 text-white py-2 px-4 rounded" onClick={handleClick}>
                                 전적갱신
                             </button>

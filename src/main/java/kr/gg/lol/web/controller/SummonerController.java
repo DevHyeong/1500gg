@@ -25,4 +25,5 @@ public class SummonerController {
         return summonerService.getLeagueById(id);
     }
 
+
 }

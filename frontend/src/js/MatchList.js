@@ -4,20 +4,25 @@ import MatchItem from './MatchItem.js';
 
 const MatchList = ({ summoner }) =>{
 
-    //const runesReforeged = "https://ddragon.leagueoflegends.com/cdn/12.5.1/data/ko_KR/runesReforged.json";
-    //const spell = "https://ddragon.leagueoflegends.com/cdn/12.5.1/data/ko_KR/summoner.json";
-    
     const [match, setMatch] = useState([]);
-    
+    const [info, setInfo] = useState([]);
+
     const getMatchList = async () =>{
         try{
             const response = await axios.get("/api/matches/" + summoner.puuid);
-
             setMatch(orderBy(response.data));
-
         }catch(e){
 
         }
+    }
+
+    const matchInfo = async() => {
+        try{
+            const response = await axios.post("/api/v1/matches", {
+                ids: match
+            })
+            setInfo(response.data);
+        }catch(e){console.error(e)}
     }
 
 
@@ -37,30 +42,19 @@ const MatchList = ({ summoner }) =>{
     
     }, [summoner]);
 
-
-
+    useEffect(() => {
+        matchInfo();
+    }, [match]);
 
     return (
         <section className="relative w-full mt-4 pb-24 overflow-x-auto">
             {
-                match.length > 0 && match.map( (e,i) =>{
-                   
-                   
-                    return <MatchItem puuId={summoner.puuid} matchId={e} />
-                    
-                   
-                    
+                info.length > 0 && info.map( (e,i) =>{
+                    return <MatchItem puuId={summoner.puuid} data={e} />
                 })
-                
             }
-            
-            
-
-
         </section>
     )
-
-
 };
 
 export default MatchList;

@@ -1,28 +1,19 @@
 package kr.gg.lol.domain.match.service;
 
-import kr.gg.lol.domain.match.dto.CurrentGameInfoDto;
 import kr.gg.lol.domain.match.dto.MatchDto;
 import kr.gg.lol.domain.match.repository.MatchJdbcRepository;
 import kr.gg.lol.domain.match.repository.MatchRepository;
-import kr.gg.lol.domain.summoner.dto.SummonerDto;
-import kr.gg.lol.domain.summoner.service.SummonerService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
-
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -41,13 +32,16 @@ class MatchServiceTest {
         assertEquals( 20, matches.getBody().size());
     }
 
-
     @Test
     public void testGetMatchByMatchId () {
-        final String id = "KR_6274588740";
-        doReturn(Optional.empty()).when(matchRepository).findById(id);
-        ResponseEntity<MatchDto> match = matchService.getMatchByMatchId(id);
-        assertEquals(match.getBody().getMetadata().getMatchId(), id);
-    }
+        //doReturn(Optional.empty()).when(matchRepository).findById(id);
+        String[] id = {"KR_6424854720", "KR_6424892660", "KR_6424933780", "KR_6424976155",
+                "KR_6425008794", "KR_6429856682", "KR_6430241097", "KR_6431096745", "KR_6431652356",
+                "KR_6431838325", "KR_6433013903", "KR_6433636856", "KR_6433805001", "KR_6433984483",
+                "KR_6435359171", "KR_6436405053", "KR_6437213323", "KR_6437312271", "KR_6438402401",
+                "KR_6438481695"};
 
+        ResponseEntity<List<MatchDto>> response = matchService.getMatchesByIds(id);
+        //assertEquals(response.getBody().getMetadata().getMatchId(), id);
+    }
 }

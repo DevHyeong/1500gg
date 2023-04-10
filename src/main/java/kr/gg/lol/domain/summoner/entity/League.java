@@ -1,26 +1,22 @@
 package kr.gg.lol.domain.summoner.entity;
 
 
+import kr.gg.lol.domain.summoner.dto.LeagueDto;
 import kr.gg.lol.domain.summoner.entity.pk.LeaguePk;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static org.springframework.beans.BeanUtils.copyProperties;
+
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Setter
 @Entity
 @Table(name = "league")
 @IdClass(LeaguePk.class)
 public class League {
-
     private String leagueId;
-
     @Id
     private String summonerId;
     private String summonerName;
@@ -41,5 +37,13 @@ public class League {
     @PreUpdate
     public void prePersist(){
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public League(){
+
+    }
+
+    public League(LeagueDto source){
+        copyProperties(source, this);
     }
 }

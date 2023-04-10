@@ -40,11 +40,11 @@ public class Match {
 
     @OneToMany//(fetch = FetchType.EAGER)
     @JoinColumn(name = "match_id", insertable = false, updatable = false)
-    private List<Participant> participants;
+    private List<Participant> participants = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "match_id", insertable = false, updatable = false)
-    private List<Team> teams;
+    private List<Team> teams = new ArrayList<>();
 
 
     public Match(){
