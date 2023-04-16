@@ -14,12 +14,12 @@ public class PropertyTest {
     @Test
     void testGetProperty() throws Exception{
         Properties properties = new Properties();
-        try(InputStream inputStream = new ClassPathResource("/prod/database.conf").getInputStream()){
+        try(InputStream inputStream = new ClassPathResource("/dev/database.conf").getInputStream()){
             properties.load(inputStream);
         }catch (IOException e){
 
         }
         String key = properties.getProperty("database.username");
-        assertEquals("admin", key);
+        assertEquals("root", key);
     }
 }
