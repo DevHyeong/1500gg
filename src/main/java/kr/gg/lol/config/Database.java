@@ -29,10 +29,10 @@ public enum Database {
         }
     },
 
-    H2(org.h2.Driver.class, H2Dialect.class, "jdbc:h2:tcp:/db/h2"){
+    H2(org.h2.Driver.class, H2Dialect.class, ""){//"jdbc:h2:tcp:/db/h2"
         @Override
         protected void setupVariants(BasicDataSource dataSource, Properties properties) {
-            dataSource.setUrl(getUrlTemplate());
+            dataSource.setUrl(properties.getProperty(DATABASE_URL));
             dataSource.setUsername(properties.getProperty(DATABASE_USERNAME));
             dataSource.setPassword(properties.getProperty(DATABASE_PASSWORD));
         }

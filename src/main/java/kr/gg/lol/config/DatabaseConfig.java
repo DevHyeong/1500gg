@@ -37,7 +37,8 @@ public class DatabaseConfig {
         for(String profile : env.getActiveProfiles()){
             if(profile.equals("prod"))
                 environment = "prod";
-
+            if(profile.equals("local"))
+                environment = "local";
         }
         log.info(environment);
         try(InputStream inputStream = new ClassPathResource(String.format("/%s/database.conf", environment))

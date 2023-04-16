@@ -22,6 +22,13 @@ public class Ban {
     @Id
     @Column(name = "team_id")
     private int teamId;
+//    @Id
+//    @ManyToOne
+//    @JoinColumns({
+//        @JoinColumn(name = "match_id", insertable = false, updatable = false),
+//        @JoinColumn(name = "team_id", insertable = false, updatable = false)
+//    })
+//    private Team team;
 
     @Id
     private int pickTurn;
@@ -33,8 +40,8 @@ public class Ban {
     }
 
     public Ban(String matchId, int teamId, BanDto source){
-        this.matchId = matchId;
-        this.teamId = teamId;
+        //this.matchId = matchId;
+        //this.teamId = teamId;
         this.championId = source.getChampionId();
         this.pickTurn = source.getPickTurn();
     }

@@ -6,6 +6,7 @@ import kr.gg.lol.domain.match.dto.MatchDto;
 import kr.gg.lol.domain.match.dto.ParticipantDto;
 import kr.gg.lol.domain.match.entity.Ban;
 import kr.gg.lol.domain.match.entity.Match;
+import kr.gg.lol.domain.match.entity.Participant;
 import kr.gg.lol.domain.match.repository.MatchJdbcRepository;
 import kr.gg.lol.domain.match.repository.MatchRepository;
 import kr.gg.lol.domain.match.service.MatchService;
@@ -32,10 +33,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MatchUpdateService {
-    private final SummonerRepository summonerRepository;
-    private final SummonerJdbcRepository summonerJdbcRepository;
-    private final MatchJdbcRepository matchJdbcRepository;
-    private final MatchRepository matchRepository;
+    private final SummonerService summonerService;
+    private final MatchService matchService;
 
     /**
      *  전적갱신
@@ -43,45 +42,9 @@ public class MatchUpdateService {
      * */
     @Transactional
     public void updateMatches(String name){
-
-        ResponseEntity<SummonerDto> summoner = Rest.get(Uri.summonerUri(name), SummonerDto.class);
-        summonerRepository.save(new Summoner((summoner.getBody())));
-
-        String id = summoner.getBody()
-                .getId();
-        ResponseEntity<List<LeagueDto>> leagues = Rest.get(Uri.leagueUri(id), new ParameterizedTypeReference<List<LeagueDto>>(){});
-        summonerJdbcRepository.bulkInsert(
-                leagues.getBody()
-                        .stream()
-                        .map(e-> new League(e))
-                        .collect(Collectors.toList()));
-
-        ResponseEntity<List<String>> matches = Rest.get(Uri.matchesUri(summoner.getBody().getPuuid()), new ParameterizedTypeReference<List<String>>() {});
-
-        for(String matchId : matches.getBody()){
-            ResponseEntity<MatchDto> res = Rest.get(Uri.matchInfoUri(matchId), MatchDto.class);
-            Match entity = new Match(res.getBody());
-            matchJdbcRepository.saveWithoutRelation(entity);
-            matchJdbcRepository.bulkInsertParticipants(entity.getParticipants());
-            matchJdbcRepository.bulkInsertTeams(entity.getTeams());
-
-            List<Ban> bans = new ArrayList<>();
-            entity.getTeams().stream().forEach(e-> {
-                bans.addAll(e.getBans());
-            });
-
-            matchJdbcRepository.bulkInsertBans(bans);
-
-            res.getBody().getInfo().getTeams().forEach(t-> {
-
-                int kills = res.getBody().getInfo().getParticipants().stream().filter(p-> t.getTeamId() == p.getTeamId())
-                        .mapToInt(ParticipantDto::getKills)
-                        .sum();
-                t.setKillsChampion(kills);
-            });
-        }
+        SummonerDto summoner = summonerService.getSummonerByName(name, true);
+        summonerService.getLeagueById(summoner.getId(), true);
+        matchService.getMatchesByPuuid(summoner.getPuuid(), true);
     }
-
-
 
 }

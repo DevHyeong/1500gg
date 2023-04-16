@@ -12,6 +12,8 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 public class Summoner {
 
     @Id

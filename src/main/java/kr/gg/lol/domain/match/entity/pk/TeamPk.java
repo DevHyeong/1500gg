@@ -9,11 +9,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class TeamPk implements Serializable {
 
-    @Id
-    @Column(name = "match_id")
     private String matchId;
 
-    @Id
     private int teamId;
 
 }

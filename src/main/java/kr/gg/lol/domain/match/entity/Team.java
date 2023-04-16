@@ -26,6 +26,7 @@ public class Team {
     private String matchId;
 
     @Id
+    //@Column(name = "team_id")
     private int teamId;
 
     private boolean firstBaron;

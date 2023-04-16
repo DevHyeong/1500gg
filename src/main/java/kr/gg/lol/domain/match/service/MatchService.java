@@ -46,11 +46,11 @@ public class MatchService {
      * */
     @Cacheable(value = MATCHES, key = "#puuid")
     @Transactional
-    public ResponseEntity getMatchesByPuuid(String puuid){
+    public List<String> getMatchesByPuuid(String puuid, boolean renewal){
 
         List<String> matches = matchRepository.findMatchesByPuuid(puuid);
 
-        if(matches.size() < 20){
+        if(renewal || matches.size() < 20){
             ResponseEntity<List<String>> response = Rest.get(Uri.matchesUri(puuid), new ParameterizedTypeReference<List<String>>() {});
 
             for(String id : response.getBody()){
@@ -68,17 +68,13 @@ public class MatchService {
                 matchJdbcRepository.bulkInsertBans(bans);
 
                 res.getBody().getInfo().getTeams().forEach(t-> {
-
-                    int kills = res.getBody().getInfo().getParticipants().stream().filter(p-> t.getTeamId() == p.getTeamId())
-                            .mapToInt(ParticipantDto::getKills)
-                            .sum();
-                    t.setKillsChampion(kills);
+                    t.setKillsChampion(sumKillsChampion(res.getBody().getInfo().getParticipants(), t.getTeamId()));
                 });
             }
-            return response;
+            return response.getBody();
         }
 
-        return ResponseEntity.ok(matches);
+        return matches;
 
     }
 
@@ -89,7 +85,7 @@ public class MatchService {
 
     //@Cacheable(value = MATCH, key = "#matchId")
     @Transactional
-    public ResponseEntity getMatchesByIds(String... matchId){
+    public List<MatchDto> getMatchesByIds(String... matchId){
         List<Match> matches = matchRepository.findMatches(matchId);
         List<Participant> participants = matchRepository.findParticipantsByMatchIds(matchId);
         List<Team> teams = matchRepository.findTeamsByMatchIds(matchId);
@@ -103,10 +99,9 @@ public class MatchService {
                     .collect(toList()));
         });
 
-        return ResponseEntity.ok(
-                matches.stream()
+        return matches.stream()
                         .map(m-> new MatchDto(m))
-                        .collect(toList()));
+                        .collect(toList());
     }
 
     /**
@@ -127,5 +122,10 @@ public class MatchService {
         return response;
     }
 
-
+    private int sumKillsChampion(List<ParticipantDto> participants, int teamId){
+        return participants.stream()
+                .filter(p-> p.getTeamId() == teamId)
+                .mapToInt(ParticipantDto::getKills)
+                .sum();
+    }
 }

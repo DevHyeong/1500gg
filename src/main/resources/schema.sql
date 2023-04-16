@@ -1,13 +1,14 @@
 
 CREATE TABLE SUMMONER (
-    name varchar(255) PRIMARY KEY,
+    name varchar(255),
     account_id varchar(255),
     id varchar(255),
     profile_icon_id int,
-    puuid, varchar(255),
+    puuid varchar(255),
     summoner_level bigint,
-    updated_at datetime(6)
-)
+    updated_at datetime,
+    primary key(name)
+);
 
 CREATE TABLE LEAGUE (
     summoner_id varchar(255),
@@ -18,10 +19,28 @@ CREATE TABLE LEAGUE (
     rank1 varchar(255),
     summoner_name varchar(255),
     tier varchar(255),
-    updated_at datetime(6),
+    updated_at datetime,
     wins int,
     PRIMARY KEY(summoner_id, queue_type)
-)
+);
+
+CREATE TABLE MATCH_INFO (
+    id varchar(255),
+    game_creation datetime,
+    game_duration bigint,
+    game_end_time datetime,
+    game_id bigint,
+    game_mode varchar(255),
+    game_name varchar(255),
+    game_start_time datetime,
+    game_type varchar(255),
+    game_version varchar(255),
+    map_id int,
+    platform_id varchar(255),
+    queue_id int,
+    tournament_code varchar(255),
+    primary key(id)
+);
 
 
 
@@ -130,4 +149,69 @@ CREATE TABLE PARTICIPANT (
   win bit(1) NOT NULL,
   PRIMARY KEY (participant_id, match_id),
   FOREIGN KEY (match_id) REFERENCES match_info (id)
-)
+);
+
+CREATE TABLE PERK_PRIMARY (
+    participant_id int,
+    match_id varchar(255),
+    perk1 int,
+    perk2 int,
+    perk3 int,
+    perk4 int,
+    style int,
+    var11 int,
+    var12 int,
+    var13 int,
+    var21 int,
+    var22 int,
+    var23 int,
+    var31 int,
+    var32 int,
+    var33 int,
+    var41 int,
+    var42 int,
+    var43 int,
+    primary key(participant_id, match_id)
+);
+
+CREATE TABLE PERK_SUB (
+    participant_id int,
+    match_id varchar(255),
+    perk1 int,
+    perk2 int,
+    style int,
+    var11 int,
+    var12 int,
+    var13 int,
+    var21 int,
+    var22 int,
+    var23 int,
+    primary key(participant_id, match_id)
+);
+
+CREATE TABLE TEAM (
+    team_id int,
+    match_id varchar(255),
+    first_baron bit(1),
+    first_champion bit(1),
+    first_dragon bit(1),
+    first_inhibitor bit(1),
+    first_rift_herald bit(1),
+    first_tower bit(1),
+    kills_baron int,
+    kills_champion int,
+    kills_dragon int,
+    kills_inhibitor int,
+    kills_rift_herald int,
+    kills_tower int,
+    win bit(1),
+    primary key(team_id, match_id)
+);
+
+CREATE TABLE BAN (
+    team_id int,
+    pick_turn int,
+    match_id varchar(255),
+    champion_id int,
+    primary key(team_id, pick_turn, match_id)
+);

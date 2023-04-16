@@ -41,7 +41,7 @@ public class Rest {
                     requestEntity, responseType);
             return response;
         }catch (HttpClientErrorException e){
-            throw new RuntimeException(e);
+            throw new HttpClientErrorException(e.getStatusCode());
         }
     }
 

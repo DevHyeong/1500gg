@@ -4,22 +4,21 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.gg.lol.domain.match.entity.Match;
 import kr.gg.lol.domain.match.entity.Participant;
 import kr.gg.lol.domain.match.entity.Team;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static kr.gg.lol.domain.match.entity.QBan.ban;
 import static kr.gg.lol.domain.match.entity.QMatch.match;
 import static kr.gg.lol.domain.match.entity.QParticipant.participant;
 import static kr.gg.lol.domain.match.entity.QTeam.team;
 
 @Repository
+@RequiredArgsConstructor
 public class MatchCustomRepositoryImpl implements MatchCustomRepository{
     private final JPAQueryFactory jpaQueryFactory;
-
-    public MatchCustomRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
-        this.jpaQueryFactory = jpaQueryFactory;
-    }
-
     @Override
     public List<String> findMatchesByPuuid(String puuid) {
         return jpaQueryFactory.select(match.id)
@@ -27,6 +26,7 @@ public class MatchCustomRepositoryImpl implements MatchCustomRepository{
                 .leftJoin(participant).on(match.id.eq(participant.matchId))
                 .fetchJoin()
                 .where(participant.puuid.eq(puuid))
+                .orderBy(match.gameStartTime.desc())
                 .limit(20)
                 .fetch();
     }
@@ -52,10 +52,12 @@ public class MatchCustomRepositoryImpl implements MatchCustomRepository{
 
     @Override
     public List<Team> findTeamsByMatchIds(String... matchId) {
-        return jpaQueryFactory.selectFrom(team)
-                .leftJoin(team.bans)
+       List<Team> result = jpaQueryFactory.selectFrom(team)
+               .distinct()
+               .leftJoin(team.bans, ban)
                 .fetchJoin()
                 .where(team.matchId.in(matchId))
                 .fetch();
+       return result;
     }
 }

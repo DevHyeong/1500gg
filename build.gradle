@@ -23,7 +23,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 	implementation group: "mysql", name: "mysql-connector-java", version: "8.0.13"
-	implementation group: "com.h2database", name: "h2", version: "1.4.197"
+	implementation group: "com.h2database", name: "h2", version: "2.1.214"
 	implementation group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
 	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.14.0'
 	implementation group: 'com.querydsl', name: 'querydsl-jpa', version: queryDslVersion

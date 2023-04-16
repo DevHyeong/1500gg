@@ -13,10 +13,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ParticipantPk implements Serializable {
 
-    @Id
-    @Column(name = "match_id")
     private String matchId;
-
-    @Id
     private int participantId;
 }
