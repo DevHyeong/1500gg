@@ -16,21 +16,19 @@ const Content = ({ params }) =>{
         set();        
         try{
             const response = await axios.get("/api/summoner/" + name);
-            setSummoner(response.data);
+            setSummoner(response.data.body);
         }catch(e){console.error(e);}
         
     }
 
-    const handleClick = () =>{
+    const handleRenewal = () =>{
         renewal();
-        
-
     }
 
     const renewal = async () =>{
         
         try{
-            const response = await axios.post("/api/renewal", {
+            const response = await axios.post("/api/matches/renewal", {
                 name : summoner.name
             });
 
@@ -63,7 +61,7 @@ const Content = ({ params }) =>{
                 <>
                 <section className="flex flex-row mt-1">
                     <div className="h-24 w-24">
-                        <img src={"https://ddragon.leagueoflegends.com/cdn/12.12.1/img/profileicon/"+ summoner.profileIconId+ ".png"}/>
+                        <img src={"https://ddragon.leagueoflegends.com/cdn/13.7.1/img/profileicon/"+ summoner.profileIconId+ ".png"}/>
 
                     </div>
 
@@ -71,7 +69,7 @@ const Content = ({ params }) =>{
                         <p className="text-xl font-bold">{summoner.name}</p>
                         <p className="text-sm">Lv.{summoner.summonerLevel}</p>
                         <div className="relative mt-2">
-                            <button type="button" className="hover:bg-blue-400 bg-blue-500 text-white py-2 px-4 rounded" onClick={handleClick}>
+                            <button type="button" className="hover:bg-blue-400 bg-blue-500 text-white py-2 px-4 rounded" onClick={handleRenewal}>
                                 전적갱신
                             </button>
                         </div>

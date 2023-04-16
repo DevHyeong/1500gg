@@ -10,7 +10,7 @@ const MatchList = ({ summoner }) =>{
     const getMatchList = async () =>{
         try{
             const response = await axios.get("/api/matches/" + summoner.puuid);
-            setMatch(orderBy(response.data));
+            setMatch(response.data.body);
         }catch(e){
 
         }
@@ -21,20 +21,9 @@ const MatchList = ({ summoner }) =>{
             const response = await axios.post("/api/v1/matches", {
                 ids: match
             })
-            setInfo(response.data);
+            setInfo(response.data.body);
         }catch(e){console.error(e)}
     }
-
-
-    const orderBy = (data) =>{
-        data.sort( (a,b) =>{
-            a = a.replace("KR_", "");
-            b = b.replace("KR_", "");
-            return b - a;
-        });
-        return data;
-    }
-
 
     useEffect(() => {
         

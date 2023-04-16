@@ -1,6 +1,6 @@
 import React from 'react';
 
-const champ_url = "https://ddragon.leagueoflegends.com/cdn/12.5.1/img/champion/";
+const champ_url = "https://ddragon.leagueoflegends.com/cdn/13.7.1/img/champion/";
 
 export default ({ p1, p2, p3, p4, p5}) =>{
     

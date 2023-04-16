@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 
-const version = "12.12.1";
+const version = "13.7.1";
 
 let champObj = {};
 

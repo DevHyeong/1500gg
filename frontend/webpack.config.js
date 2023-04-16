@@ -55,7 +55,7 @@ module.exports = {
         cleanAfterEveryBuildPatterns : [outputDirectory]
     }),
     new HtmlWebpackPlugin({
-      template: "./src/html/index.html"
+      template: "./public/html/index.html"
     })
     
   ]

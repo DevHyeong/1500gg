@@ -40,8 +40,8 @@ public class Ban {
     }
 
     public Ban(String matchId, int teamId, BanDto source){
-        //this.matchId = matchId;
-        //this.teamId = teamId;
+        this.matchId = matchId;
+        this.teamId = teamId;
         this.championId = source.getChampionId();
         this.pickTurn = source.getPickTurn();
     }

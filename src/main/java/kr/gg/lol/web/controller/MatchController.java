@@ -3,6 +3,7 @@ package kr.gg.lol.web.controller;
 import kr.gg.lol.domain.match.dto.MatchDto;
 import kr.gg.lol.domain.match.dto.RequestDto;
 import kr.gg.lol.domain.match.service.MatchService;
+import kr.gg.lol.domain.summoner.dto.SummonerDto;
 import kr.gg.lol.web.usecase.MatchUpdateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,8 @@ public class MatchController {
     }
 
     @PostMapping("/matches/renewal")
-    public ApiResult<Boolean> updateMatches(@RequestBody String name){
-        matchUpdateService.updateMatches(name);
+    public ApiResult<Boolean> updateMatches(@RequestBody SummonerDto summonerDto){
+        matchUpdateService.updateMatches(summonerDto.getName());
         return success(true);
     }
 
