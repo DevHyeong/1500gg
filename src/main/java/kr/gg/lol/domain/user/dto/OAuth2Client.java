@@ -2,6 +2,13 @@ package kr.gg.lol.domain.user.dto;
 
 import lombok.Getter;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties.*;
@@ -26,8 +33,8 @@ public class OAuth2Client {
     public static List<Properties> properties(OAuth2ClientProperties oAuth2ClientProperties){
         return Arrays.stream(OAuth2Provider.values())
                 .map(e-> {
-                    Provider provider = oAuth2ClientProperties.getProvider().get(e.provider);
-                    Registration registration = oAuth2ClientProperties.getRegistration().get(e.provider);
+                    Provider provider = oAuth2ClientProperties.getProvider().get(e.name());
+                    Registration registration = oAuth2ClientProperties.getRegistration().get(e.name());
                     return new Properties(provider, registration);
                 }).collect(Collectors.toList());
     }
@@ -73,11 +80,11 @@ public class OAuth2Client {
     }
     @Getter
     public enum OAuth2Provider{
-        NAVER("naver"){
+        naver{
             @Override
             public URI tokenRequest(String code, OAuth2ClientProperties oAuth2ClientProperties) {
-                Provider authProvider = oAuth2ClientProperties.getProvider().get(this.getProvider());
-                Registration authRegistration = oAuth2ClientProperties.getRegistration().get(this.getProvider());
+                Provider authProvider = oAuth2ClientProperties.getProvider().get(this.name());
+                Registration authRegistration = oAuth2ClientProperties.getRegistration().get(this.name());
                 return UriComponentsBuilder
                         .fromUriString(authProvider.getTokenUri())
                         .queryParam("client_id", authRegistration.getClientId())
@@ -88,12 +95,19 @@ public class OAuth2Client {
                         .build()
                         .toUri();
             }
+
+            @Override
+            public OAuth2User userInfoRequest(String accessToken, OAuth2ClientProperties oAuth2ClientProperties) {
+                Provider provider = oAuth2ClientProperties.getProvider().get(this.name());
+                ResponseEntity<NaverOAuth2User> user = userInfoRequest(provider.getUserInfoUri(), accessToken, NaverOAuth2User.class);
+                return user.getBody();
+            }
         },
-        KAKAO("kakao"){
+        kakao{
             @Override
             public URI tokenRequest(String code, OAuth2ClientProperties oAuth2ClientProperties) {
-                Provider authProvider = oAuth2ClientProperties.getProvider().get(this.getProvider());
-                Registration authRegistration = oAuth2ClientProperties.getRegistration().get(this.getProvider());
+                Provider authProvider = oAuth2ClientProperties.getProvider().get(this.name());
+                Registration authRegistration = oAuth2ClientProperties.getRegistration().get(this.name());
                 return UriComponentsBuilder
                         .fromUriString(authProvider.getTokenUri())
                         .queryParam("client_id", authRegistration.getClientId())
@@ -105,15 +119,29 @@ public class OAuth2Client {
                         .build()
                         .toUri();
             }
-        };
 
-        private final String provider;
-        OAuth2Provider(String provider){
-            this.provider = provider;
+            @Override
+            public OAuth2User userInfoRequest(String accessToken, OAuth2ClientProperties oAuth2ClientProperties) {
+                Provider provider = oAuth2ClientProperties.getProvider().get(this.name());
+                ResponseEntity<KakaoOAuth2User> user = userInfoRequest(provider.getUserInfoUri(), accessToken, KakaoOAuth2User.class);
+                return user.getBody();
+            }
+        };
+        OAuth2Provider(){
         }
 
         public abstract URI tokenRequest(String code, OAuth2ClientProperties oAuth2ClientProperties);
+        public abstract OAuth2User userInfoRequest(String accessToken, OAuth2ClientProperties oAuth2ClientProperties);
 
+        public <T> ResponseEntity<T> userInfoRequest(String url, String accessToken, Class<T> classType){
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "Bearer " + accessToken);
+            RequestEntity request = RequestEntity.get(url)
+                    .headers(headers)
+                    .build();
+            return restTemplate.exchange(url, HttpMethod.POST, request, classType);
+        }
     }
 
 }
