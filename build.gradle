@@ -29,6 +29,7 @@ dependencies {
 	implementation group: 'com.querydsl', name: 'querydsl-jpa', version: queryDslVersion
 	implementation group: 'com.querydsl', name: 'querydsl-apt', version: queryDslVersion
 	implementation 'com.google.code.findbugs:jsr305:3.0.2'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 	compileOnly 'org.projectlombok:lombok'
 
