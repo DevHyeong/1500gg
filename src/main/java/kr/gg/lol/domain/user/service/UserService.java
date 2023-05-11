@@ -22,7 +22,6 @@ public class UserService {
         User user = new User(userDto);
         UserDto securedUser = new UserDto(userRepository.save(user));
         SecurityContextHolder.getContext().setAuthentication(securedUser);
-
         return securedUser;
     }
 }

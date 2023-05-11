@@ -37,13 +37,15 @@ public class OAuth2Service {
         Optional<User> result = userRepository.findBySocialId(user.getName());
         if(result.isPresent()){
             UserDto securedUser = new UserDto(result.get());
+            securedUser.setAccessToken(accessToken);
             SecurityContextHolder.getContext().setAuthentication(securedUser);
         }
         return user;
     }
 
     public boolean logout(UserDto userDto){
-        
+        userDto.getProvider().logout(userDto.getAccessToken(), oAuth2ClientProperties);
+        return true;
     }
 
 
