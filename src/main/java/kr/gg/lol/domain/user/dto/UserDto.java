@@ -21,7 +21,7 @@ public class UserDto implements Authentication {
     private String nickname;
     @Enumerated(value = EnumType.STRING)
     private OAuth2Client.OAuth2Provider provider;
-
+    private String accessToken;
     public UserDto(){
 
     }

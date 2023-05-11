@@ -26,6 +26,6 @@ public class KakaoOAuth2User implements OAuth2User {
     }
     @Override
     public String getName() {
-        return null;
+        return String.valueOf(id);
     }
 }
