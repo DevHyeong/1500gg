@@ -1,9 +1,9 @@
 package kr.gg.lol.domain.user.entity;
 
 import kr.gg.lol.domain.user.dto.UserDto;
+import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
 import lombok.Getter;
 
-import static kr.gg.lol.domain.user.dto.OAuth2Client.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
