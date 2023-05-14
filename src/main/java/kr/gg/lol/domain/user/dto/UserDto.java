@@ -1,27 +1,25 @@
 package kr.gg.lol.domain.user.dto;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.gg.lol.domain.user.entity.User;
+import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import net.minidev.json.JSONObject;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-
-import javax.annotation.Nonnull;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.util.Collection;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class UserDto implements Authentication {
+public class UserDto{
     private String id;
     private String nickname;
     @Enumerated(value = EnumType.STRING)
-    private OAuth2Client.OAuth2Provider provider;
+    private OAuth2Provider provider;
     private String accessToken;
+    private LocalDateTime expiredAt;
+    private boolean authenticated;
+
     public UserDto(){
 
     }
@@ -30,41 +28,6 @@ public class UserDto implements Authentication {
         this.nickname = user.getNickname();
         this.provider = user.getProvider();
     }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public Object getCredentials() {
-        return null;
-    }
-
-    @Override
-    public Object getDetails() {
-        return null;
-    }
-
-    @Override
-    public Object getPrincipal() {
-        return null;
-    }
-
-    @Override
-    public boolean isAuthenticated() {
-        return true;
-    }
-
-    @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-    }
-    @Override
-    public String getName() {
-        return null;
-    }
-
     @Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
