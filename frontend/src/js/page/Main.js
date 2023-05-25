@@ -3,6 +3,7 @@ import Header from '../component/Header.js';
 import Footer from '../component/Footer.js';
 import axios from 'axios';
 import {BoardContent} from '../../css/Styles'
+import HeaderContainer from '../store/containers/common/HeaderContainer.js';
 
 
 export default () => {
@@ -14,15 +15,10 @@ export default () => {
         try{
             const response = await axios.get("/api/board/getBoardList");
             if(response.status === 200){
-               
                 setBoard(response.data);
-
-
             }
 
         }catch(e){console.log(e)}
-
-
     }
 
     
@@ -39,7 +35,7 @@ export default () => {
 
     return (
         <>
-            <Header/>
+            <HeaderContainer/>
             <div className="mx-auto my-60 flex flex-col content-center">
                 <div className="flex mx-auto max-w-4xl">
                     <div className="relative" style={{width:"420px"}}>
@@ -61,34 +57,6 @@ export default () => {
 
                 </div>  
             </div>
-            <div className="h-60 mx-auto max-w-4xl flex flex-col">
-                <h2 className="flex pb-3 font-bold">공지사항</h2>
-                <div className="flex">
-                {
-                    board && board.map( (e, i)=> {
-                        if(i < 5){
-                            return (
-                                <div key={e.boardId} className="bg-white px-2 py-2 w-64 shadow-slate-50 cursor-pointer h-full" 
-                                onClick={ () => handleClick(e)}>
-                                    <p className="font-bold text-sm">{e.title}</p>
-                                    <BoardContent dangerouslySetInnerHTML={{__html: e.content}}/>
-
-                                </div>
-                                
-                                
-                            )
-                        }
-                        
-                    })
-                    
-
-
-                }
-                </div>
-
-            </div>
-
-
             <Footer/>
 
         </>

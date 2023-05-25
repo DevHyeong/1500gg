@@ -3,10 +3,12 @@ import React from 'react';
 import {Routes, Route,Switch} from 'react-router-dom';
 import Find from './page/Find';
 import Main from './page/Main';
-import BoardList from './page/BoardList';
-import BoardDetail from './page/BoardDetail';
-import Create from './component/Create';
 import Multi from './page/Multi';
+import LoginPage from './page/login/LoginPage';
+import JoinPage from './page/login/JoinPage';
+import Success from './store/containers/login/Success';
+import Logout from './page/login/Logout';
+import PostPage from './page/post/PostPage';
 
 
 const App = () =>{
@@ -15,6 +17,10 @@ const App = () =>{
         <Routes>
             
             <Route path="/" element={<Main/>}/>
+            <Route path="/login" element={<LoginPage/>}/> 
+            <Route path="/join" element={<JoinPage/>} />
+            <Route path="/success" element={ <Success/> } />
+            <Route path="/logout" element={ <Logout/>} />
             
             <Route path="/find/:name" element={<Find/>}>
                 <Route path=":name" element={<Find/>} />
@@ -25,13 +31,7 @@ const App = () =>{
                 <Route path=":name" element={<Multi/>} />
             </Route>
             
-            
-            <Route path="/admin" element={<Create/>}/>
-            <Route path="/board/list" element={<BoardList/>}/>
-            <Route path="/board/detail/:id" element={<BoardDetail/>}>
-                <Route path=":id" element={<BoardDetail/>} />
-            </Route>
-                        
+            <Route path="/posts" element={<PostPage/>}/>
 
         </Routes>
     )
