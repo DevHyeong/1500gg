@@ -5,11 +5,26 @@ import '../css/tailwind.css';
 import {BrowserRouter} from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import progress from './store/modules/progress';
+import user from './store/modules/user';
+import { login } from './store/modules/user';
 
 const store = configureStore({
-    reducer: progress,
+    reducer: user,
 });
+
+const loadUser = () => {
+    try{
+        const user = localStorage.getItem('user');
+        if(user.authenticated) return;
+
+        store.dispatch(login(JSON.parse(user)));
+
+    }catch(e){
+        console.error('localStorage is not working')
+    }
+}
+
+loadUser();
 
 ReactDOM.render(
     <Provider store = {store} >
