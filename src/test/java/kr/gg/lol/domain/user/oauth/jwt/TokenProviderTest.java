@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,6 +45,16 @@ class TokenProviderTest {
         assertEquals(principal.getName(), attributes.get("id"));
     }
 
+    @Test
+    void testValidateToken(){
+        TokenProvider tokenProvider = new TokenProvider();
+        Authentication authentication = new MockAuthentication();
+        String token = tokenProvider.createToken(authentication);
+
+        assertEquals(false, tokenProvider.validateToken(LocalDateTime.now(), "asdfasdf.asdfdsf.sdfsdf"));
+        assertEquals(false, tokenProvider.validateToken(LocalDateTime.of(2100,10,9,12, 1), token));
+        assertEquals(true, tokenProvider.validateToken(LocalDateTime.of(2001,10,9,12, 1), token));
+    }
 
     public class MockAuthentication implements Authentication{
 
