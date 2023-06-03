@@ -1,6 +1,7 @@
 package kr.gg.lol.domain.user.oauth.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.gg.lol.domain.user.oauth.enums.SocialType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,7 +29,7 @@ public class NaverOAuth2User implements OAuth2User {
 
     @Override
     public String getName() {
-        return (String) attributes.get("id");
+        return SocialType.NAVER.getValue();
     }
 
 }

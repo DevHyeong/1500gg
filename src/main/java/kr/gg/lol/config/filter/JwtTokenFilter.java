@@ -1,6 +1,8 @@
 package kr.gg.lol.config.filter;
 
 import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
+import kr.gg.lol.domain.user.oauth.factory.SimpleOAuth2Factory;
+import kr.gg.lol.domain.user.oauth.factory.SimpleOAuth2FactoryImpl;
 import kr.gg.lol.domain.user.oauth.jwt.TokenProvider;
 import kr.gg.lol.domain.user.oauth.model.UserAuthentication;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-
-import static kr.gg.lol.common.constant.OAuth2Constants.REGISTRATION_ID;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -28,8 +28,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try{
             String token = tokenFromRequest(request);
             Map<String, Object> attributes = tokenProvider.getUserFromToken(token);
-            OAuth2Provider provider = OAuth2Provider.from( (String) attributes.get(REGISTRATION_ID));
-            Authentication authentication = new UserAuthentication(provider.getOAuth2User(attributes));
+            SimpleOAuth2Factory simpleOAuth2Factory = SimpleOAuth2FactoryImpl.createOAuth2Factory(attributes);
+            Authentication authentication = new UserAuthentication(simpleOAuth2Factory.createOAuth2User());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch (Exception e){
             log.error("{}", e);

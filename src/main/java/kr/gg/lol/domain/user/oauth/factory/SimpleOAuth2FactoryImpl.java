@@ -1,5 +1,6 @@
 package kr.gg.lol.domain.user.oauth.factory;
 
+import kr.gg.lol.domain.user.oauth.enums.SocialType;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Map;
@@ -14,7 +15,7 @@ public class SimpleOAuth2FactoryImpl {
     }
 
     public static SimpleOAuth2Factory createOAuth2Factory(String registrationId, Map<String ,Object> attributes){
-        if(registrationId.equals("naver")){
+        if(registrationId.equals(SocialType.NAVER.getValue())){
             Map<String, Object> map = (Map<String, Object>) attributes.get("response");
             return new NaverOAuth2Factory(map == null ? attributes : map);
         }

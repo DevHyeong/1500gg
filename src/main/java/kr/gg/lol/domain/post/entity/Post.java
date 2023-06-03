@@ -2,18 +2,13 @@ package kr.gg.lol.domain.post.entity;
 
 import kr.gg.lol.domain.post.dto.PostDto;
 import lombok.Getter;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
-
-import static org.springframework.beans.BeanUtils.copyProperties;
-
-
 @Entity
 @Getter
 public class Post {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long userId;
@@ -35,8 +30,10 @@ public class Post {
 
     }
 
-    public Post(PostDto target){
-        copyProperties(this, target);
+    public Post(Long userId, PostDto target){
+        this.userId = userId;
+        this.title = target.getTitle();
+        this.content = target.getContent();
     }
 
 }

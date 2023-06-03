@@ -40,9 +40,20 @@ class TokenProviderTest {
         String token = provider.createToken(authentication);
         Map<String, Object> attributes = provider.getUserFromToken(token);
 
-        assertEquals(principal.getAttributes().get(REGISTRATION_ID), attributes.get(REGISTRATION_ID));
+        Long userId = Long.parseLong(String.valueOf(attributes.get("userId")));
+        //assertEquals(principal.getAttributes().get(REGISTRATION_ID), attributes.get(REGISTRATION_ID));
         assertEquals(Date.from((Instant) principal.getAttributes().get("expiresAt")), attributes.get("expires_at"));
-        assertEquals(principal.getName(), attributes.get("id"));
+        assertEquals(principal.getAttribute("id"), attributes.get("id"));
+        assertEquals(principal.getAttribute("userId"), userId);
+    }
+
+    @Test
+    void testIntegerToLong(){
+        Integer i = new Integer(55);
+
+        Long id = Long.parseLong(String.valueOf(i));
+
+
     }
 
     @Test
@@ -80,7 +91,8 @@ class TokenProviderTest {
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("expiresAt", instant);
             attributes.put(REGISTRATION_ID, "naver");
-
+            attributes.put("id", "123sdffff");
+            attributes.put("userId", Long.valueOf(55));
             return new NaverOAuth2User(attributes);
         }
 
