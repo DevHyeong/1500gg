@@ -1,18 +1,26 @@
 package kr.gg.lol.web.controller;
 
 import kr.gg.lol.domain.user.dto.UserDto;
+import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
+import kr.gg.lol.domain.user.oauth.jwt.TokenProvider;
+import kr.gg.lol.domain.user.oauth.model.NaverOAuth2User;
 import kr.gg.lol.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static kr.gg.lol.common.util.ApiUtils.*;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 @Slf4j
 @RestController
@@ -23,6 +31,7 @@ public class UserRestController {
 //    CommonOAuth2Provider commonOAuth2Provider;
 //    OAuth2ClientProperties oAuth2ClientProperties;
     private final UserService userService;
+    private final TokenProvider tokenProvider;
 
 
 //
@@ -53,6 +62,8 @@ public class UserRestController {
 
     @PostMapping("/signIn")
     public ApiResult<UserDto> signIn(@RequestBody UserDto userDto){
+        if(!tokenProvider.validateToken(LocalDateTime.now(), userDto.getAccessToken()))
+            throw new IllegalArgumentException("정상적인 접근이 아닙니다.");
         return success(userService.signIn(userDto));
     }
 
@@ -61,4 +72,18 @@ public class UserRestController {
         userService.logout();
         return success(true);
     }
+
+    @GetMapping("/validateToken")
+    public ApiResult<Boolean> validateToken(HttpServletRequest request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        NaverOAuth2User naverOAuth2User = (NaverOAuth2User) authentication.getPrincipal();
+
+        log.debug("{} ", token);
+        naverOAuth2User.getAttributes().forEach((k,v) -> log.debug("{} {}", k, v));
+
+        return success(true);
+    }
+
+
 }

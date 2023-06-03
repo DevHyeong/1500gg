@@ -5,6 +5,6 @@ public interface OAuth2Constants {
     String SUCCESS_PATH = "/success";
     String EXPIRED_AT = "expiresAt";
     String IS_REGISTED_USER = "isRegistedUser";
-
     String REGISTRATION_ID = "registrationId";
+    String NICKNAME = "nickname";
 }

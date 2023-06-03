@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static kr.gg.lol.common.constant.OAuth2Constants.REGISTRATION_ID;
 
@@ -29,8 +30,25 @@ public class TokenProvider {
 
         return Jwts.builder()
                 .setSubject(oAuth2User.getName())
-                //.claim("nickname", oAuth2User.getAttr)
-                .claim(REGISTRATION_ID, oAuth2User.getAttributes().get(REGISTRATION_ID))
+                .claim("id", oAuth2User.getAttribute("id"))
+                .claim("userId", oAuth2User.getAttribute("userId"))
+                .setIssuedAt(new Date())
+                .setExpiration(expiresAt)
+                .signWith(SignatureAlgorithm.HS256, "WG3SWsDcaaagndmg985j930bcS00AxTC7G2dgRiqVyU=")
+                .compact();
+    }
+
+    /**
+     *  temporary token for join
+     *
+     * */
+    public String createTempToken(Authentication authentication){
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        Date expiresAt = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5));
+        return Jwts.builder()
+                .setSubject(oAuth2User.getName())
+                .claim("id", oAuth2User.getAttribute("id"))
+                .claim("userId",  oAuth2User.getAttribute("userId"))
                 .setIssuedAt(new Date())
                 .setExpiration(expiresAt)
                 .signWith(SignatureAlgorithm.HS256, "WG3SWsDcaaagndmg985j930bcS00AxTC7G2dgRiqVyU=")
@@ -45,9 +63,9 @@ public class TokenProvider {
 
         Map<String, Object> map = new HashMap<>();
         map.put("expires_at", claims.getExpiration());
-        map.put("id", claims.getSubject());
-        map.put(REGISTRATION_ID, claims.get(REGISTRATION_ID));
-
+        map.put(REGISTRATION_ID, claims.getSubject());
+        map.put("id", claims.get("id"));
+        map.put("userId", claims.get("userId"));
         return map;
     }
     public boolean validateToken(LocalDateTime now, String token){

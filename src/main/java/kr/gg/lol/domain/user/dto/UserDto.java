@@ -2,6 +2,7 @@ package kr.gg.lol.domain.user.dto;
 
 import kr.gg.lol.domain.user.entity.User;
 import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
+import kr.gg.lol.domain.user.oauth.enums.SocialType;
 import lombok.Getter;
 import lombok.Setter;
 import net.minidev.json.JSONObject;
@@ -12,10 +13,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UserDto{
-    private String id;
+    private Long id;
+    private String socialId;
     private String nickname;
     @Enumerated(value = EnumType.STRING)
-    private OAuth2Provider provider;
+    private SocialType socialType;
     private String accessToken;
     private LocalDateTime expiredAt;
     private boolean authenticated;
@@ -24,16 +26,16 @@ public class UserDto{
 
     }
     public UserDto(User user){
-        this.id = user.getSocialId();
+        this.id = user.getId();
         this.nickname = user.getNickname();
-        this.provider = user.getProvider();
+        this.socialType = user.getSocialType();
     }
     @Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", id);
         jsonObject.put("nickname", nickname);
-        jsonObject.put("provider", provider);
+        jsonObject.put("socialType", socialType);
         return jsonObject.toString();
     }
 }

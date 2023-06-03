@@ -14,7 +14,6 @@ public class NaverOAuth2Factory extends SimpleOAuth2Factory{
 
     @Override
     public OAuth2User createOAuth2User() {
-        attributes.put("socialType", SocialType.NAVER);
         return new NaverOAuth2User(attributes);
     }
 }

@@ -1,9 +1,10 @@
 package kr.gg.lol.domain.user.service;
 
-import antlr.Token;
 import kr.gg.lol.domain.user.dto.UserDto;
 import kr.gg.lol.domain.user.entity.User;
-import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
+import kr.gg.lol.domain.user.oauth.enums.SocialType;
+import kr.gg.lol.domain.user.oauth.factory.SimpleOAuth2Factory;
+import kr.gg.lol.domain.user.oauth.factory.SimpleOAuth2FactoryImpl;
 import kr.gg.lol.domain.user.oauth.jwt.TokenProvider;
 import kr.gg.lol.domain.user.oauth.model.UserAuthentication;
 import kr.gg.lol.domain.user.repository.UserRepository;
@@ -11,11 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 import java.util.Map;
-
-import static kr.gg.lol.common.constant.OAuth2Constants.REGISTRATION_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,27 +24,23 @@ public class UserService {
     }
 
     public UserDto signIn(UserDto userDto){
-        // access_token이 유효한가
-
         Map<String, Object> attributes = tokenProvider.getUserFromToken(userDto.getAccessToken());
-        String registrationId = (String) attributes.get(REGISTRATION_ID);
-        OAuth2Provider provider = OAuth2Provider.from(registrationId);
-        userDto.setProvider(provider);
-        userDto.setId((String) attributes.get("id"));
+        SimpleOAuth2Factory simpleOAuth2Factory = SimpleOAuth2FactoryImpl
+                .createOAuth2Factory(attributes);
+        OAuth2User oAuth2User = simpleOAuth2Factory.createOAuth2User();
+        userDto.setSocialType((SocialType) oAuth2User.getAttribute("socialType"));
+        userDto.setSocialId((String)oAuth2User.getAttribute("id"));
 
         User user = new User(userDto);
         UserDto securedUser = new UserDto(userRepository.save(user));
         securedUser.setAccessToken(userDto.getAccessToken());
         securedUser.setAuthenticated(true);
-        SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(provider.getOAuth2User(attributes)));
+        //securedUser.setExpiredAt((Date) attributes.get("expires_at"));
+        //        .queryParam("access_token", jwtToken)
         return securedUser;
     }
 
     public void logout(){
         UserAuthentication userAuthentication = (UserAuthentication) SecurityContextHolder.getContext().getAuthentication();
-        OAuth2User oAuth2User = (OAuth2User) userAuthentication.getPrincipal();
-        String registrationId = (String) oAuth2User.getAttributes().get(REGISTRATION_ID);
-        OAuth2Provider oAuth2Provider = OAuth2Provider.from(registrationId);
-        oAuth2Provider.logout(userAuthentication);
     }
 }

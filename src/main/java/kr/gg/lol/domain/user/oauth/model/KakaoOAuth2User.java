@@ -1,6 +1,7 @@
 package kr.gg.lol.domain.user.oauth.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.gg.lol.domain.user.oauth.enums.SocialType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +26,6 @@ public class KakaoOAuth2User implements OAuth2User {
     }
     @Override
     public String getName() {
-        return String.valueOf((Long)attributes.get("id"));
+        return SocialType.KAKAO.getValue();
     }
 }
