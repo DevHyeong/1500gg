@@ -215,3 +215,22 @@ CREATE TABLE BAN (
     champion_id int,
     primary key(team_id, pick_turn, match_id)
 );
+
+CREATE TABLE _USER (
+    id bigint auto_increment primary key,
+    social_id varchar(255),
+    nickname varchar(50) unique,
+    social_type varchar(10),
+    created_at datetime,
+    updated_at datetime
+);
+
+CREATE TABLE POST (
+    id bigint auto_increment primary key,
+    user_id bigint,
+    title varchar(100),
+    content varchar(300),
+    created_at datetime,
+    updated_at datetime,
+    foreign key(user_id) references _user(id)
+);

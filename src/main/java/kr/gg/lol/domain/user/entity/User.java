@@ -9,7 +9,7 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "_user")
 @Getter
 public class User {
     @Id

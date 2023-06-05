@@ -14,11 +14,16 @@ import java.time.LocalDateTime;
 public class PostDto {
     private Long id;
     private Long userId;
+    private String nickname;
     private String title;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public PostDto(String title, String content){
+        this.title = title;
+        this.content = content;
+    }
     public static PostDto toDto(Post post){
         return PostDto.builder()
                 .id(post.getId())
