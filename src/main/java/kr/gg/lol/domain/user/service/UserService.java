@@ -3,7 +3,6 @@ package kr.gg.lol.domain.user.service;
 import kr.gg.lol.domain.user.dto.UserDto;
 import kr.gg.lol.domain.user.entity.User;
 import kr.gg.lol.domain.user.oauth.enums.SocialType;
-import kr.gg.lol.domain.user.oauth.factory.SimpleOAuth2Factory;
 import kr.gg.lol.domain.user.oauth.factory.SimpleOAuth2FactoryImpl;
 import kr.gg.lol.domain.user.oauth.jwt.TokenProvider;
 import kr.gg.lol.domain.user.oauth.model.UserAuthentication;
@@ -25,9 +24,7 @@ public class UserService {
 
     public UserDto signIn(UserDto userDto){
         Map<String, Object> attributes = tokenProvider.getUserFromToken(userDto.getAccessToken());
-        SimpleOAuth2Factory simpleOAuth2Factory = SimpleOAuth2FactoryImpl
-                .createOAuth2Factory(attributes);
-        OAuth2User oAuth2User = simpleOAuth2Factory.createOAuth2User();
+        OAuth2User oAuth2User = SimpleOAuth2FactoryImpl.createOAuth2User(attributes);
         userDto.setSocialType((SocialType) oAuth2User.getAttribute("socialType"));
         userDto.setSocialId((String)oAuth2User.getAttribute("id"));
 
