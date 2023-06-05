@@ -2401,4 +2401,20 @@ INSERT INTO ban
 (team_id, pick_turn, match_id, champion_id)
 VALUES(200, 10, 'KR_6439687377', 126);
 
+INSERT INTO _USER (social_id, nickname, social_type) VALUES ('adfiouwerlkj', '생각하는개발자', 'KAKAO');
 
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목1', '내용1');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목2', '내용2');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목3', '내용3');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목4', '내용4');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목5', '내용5');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목6', '내용6');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목7', '내용7');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목8', '내용8');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목9', '내용9');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목10', '내용10');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목11', '내용11');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목12', '내용12');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목13', '내용13');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목14', '내용14');
+INSERT INTO POST (user_id, title, content) VALUES (1, '제목15', '내용15');

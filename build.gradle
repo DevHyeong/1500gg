@@ -42,7 +42,9 @@ dependencies {
 	annotationProcessor "javax.annotation:javax.annotation-api"
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
+	testImplementation group: 'org.jeasy', name: 'easy-random-core', version: '5.0.0'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 sourceSets {

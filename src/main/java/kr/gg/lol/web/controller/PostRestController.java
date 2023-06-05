@@ -1,17 +1,20 @@
 package kr.gg.lol.web.controller;
 
+import static kr.gg.lol.common.util.ApiUtils.*;
 import kr.gg.lol.domain.post.dto.PostDto;
+import kr.gg.lol.domain.post.dto.PostPageRequest;
 import kr.gg.lol.domain.post.service.PostService;
-import kr.gg.lol.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static kr.gg.lol.common.util.ApiUtils.success;
+
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -28,11 +31,7 @@ public class PostRestController {
     }
 
     @GetMapping("/posts")
-    public List<PostDto> posts(){
-        return new ArrayList<>();
+    public ApiResult<List<PostDto>> posts(PostPageRequest pageRequest){
+        return success(postService.posts(pageRequest));
     }
-
-
-
-
 }
