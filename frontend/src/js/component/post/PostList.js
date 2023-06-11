@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import PostItem from "./PostItem";
 import PostCreate from "./PostCreate";
 import { get } from "../../common/ApiUtil";

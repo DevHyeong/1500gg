@@ -67,6 +67,17 @@ class TokenProviderTest {
         assertEquals(true, tokenProvider.validateToken(LocalDateTime.of(2001,10,9,12, 1), token));
     }
 
+    @Test
+    void testRevokeToken(){
+        TokenProvider tokenProvider = new TokenProvider();
+        Authentication authentication = new MockAuthentication();
+        String token = tokenProvider.createToken(authentication);
+
+        assertEquals(true, tokenProvider.validateToken(LocalDateTime.now(), token));
+        tokenProvider.revokeToken(token);
+        assertEquals(false, tokenProvider.validateToken(LocalDateTime.now(), token));
+    }
+
     public class MockAuthentication implements Authentication{
 
         @Override
