@@ -31,7 +31,7 @@ const LoginPage = () =>{
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <div className="flex justify-center">
                 <img
-                    src="/images/login/btn/naver-login-btn.png"
+                    src="images/login/btn/naver-login-btn.png"
                     className="w-10 h-10 m-3 cursor-pointer" onClick={()=> toLink('naver')}
                 />
             

@@ -1,13 +1,11 @@
 package kr.gg.lol.domain.user.oauth.handler;
 
+import kr.gg.lol.common.ConfigFileProperties;
 import kr.gg.lol.domain.user.oauth.jwt.TokenProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.ServletException;
@@ -19,11 +17,18 @@ import java.nio.charset.Charset;
 
 import static kr.gg.lol.common.constant.OAuth2Constants.*;
 
-@RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final TokenProvider tokenProvider;
-    private static final String DOMAIN = "http://localhost:3000";
+    private final ConfigFileProperties configFileProperties;
+    private final String DOMAIN;
+
+    public OAuth2SuccessHandler(TokenProvider tokenProvider, ConfigFileProperties configFileProperties) {
+        this.tokenProvider = tokenProvider;
+        this.configFileProperties = configFileProperties;
+        this.DOMAIN = configFileProperties.getProperty("front.domain.url");
+    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String target = generateTargetUrl(authentication);

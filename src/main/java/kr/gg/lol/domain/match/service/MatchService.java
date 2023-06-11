@@ -39,22 +39,23 @@ import static kr.gg.lol.common.constant.CacheConstants.MATCHES;
 public class MatchService {
     private final MatchJdbcRepository matchJdbcRepository;
     private final MatchRepository matchRepository;
+    private final Rest rest;
 
     /**
      *   매치 리스트
      *
      * */
-    @Cacheable(value = MATCHES, key = "#puuid")
+    //@Cacheable(value = MATCHES, key = "#puuid")
     @Transactional
     public List<String> getMatchesByPuuid(String puuid, boolean renewal){
 
         List<String> matches = matchRepository.findMatchesByPuuid(puuid);
 
         if(renewal || matches.size() < 20){
-            ResponseEntity<List<String>> response = Rest.get(Uri.matchesUri(puuid), new ParameterizedTypeReference<List<String>>() {});
+            ResponseEntity<List<String>> response = rest.get(Uri.matchesUri(puuid), new ParameterizedTypeReference<List<String>>() {});
 
             for(String id : response.getBody()){
-                ResponseEntity<MatchDto> res = Rest.get(Uri.matchInfoUri(id), MatchDto.class);
+                ResponseEntity<MatchDto> res = rest.get(Uri.matchInfoUri(id), MatchDto.class);
                 Match entity = new Match(res.getBody());
                 matchJdbcRepository.saveWithoutRelation(entity);
                 matchJdbcRepository.bulkInsertParticipants(entity.getParticipants());
@@ -119,7 +120,7 @@ public class MatchService {
                 .expand(id)
                 .toUri();
 
-        ResponseEntity<CurrentGameInfoDto> response = Rest.get(uri, CurrentGameInfoDto.class);
+        ResponseEntity<CurrentGameInfoDto> response = rest.get(uri, CurrentGameInfoDto.class);
         return response;
     }
 

@@ -37,14 +37,16 @@ public class SummonerService {
     private final SummonerJdbcRepository summonerJdbcRepository;
     private final LeagueRepository leagueRepository;
 
-    @Cacheable(value = SUMMONER_NAME, key = "#name")
+    private final Rest rest;
+
+    //@Cacheable(value = SUMMONER_NAME, key = "#name")
     @Transactional
     public SummonerDto getSummonerByName(String name, boolean renewal){
 
         Optional<Summoner> summoner = summonerRepository.findByName(name);
         System.out.println(name);
         if(renewal || summoner.isEmpty()){
-            ResponseEntity<SummonerDto> response = Rest.get(Uri.summonerUri(name), SummonerDto.class);
+            ResponseEntity<SummonerDto> response = rest.get(Uri.summonerUri(name), SummonerDto.class);
             Summoner entity = new Summoner(response.getBody());
             summonerRepository.save(entity);
             return response.getBody();
@@ -52,11 +54,11 @@ public class SummonerService {
         return new SummonerDto(summoner.get());
     }
 
-    @Cacheable(value = LEAGUE_ID, key = "#id")
+    //@Cacheable(value = LEAGUE_ID, key = "#id")
     public List<LeagueDto> getLeagueById(String id, boolean renewal){
         Optional<List<League>> leagues = leagueRepository.findBySummonerId(id);
         if(renewal || leagues.isEmpty() || leagues.get().size() < 1){
-            ResponseEntity<List<LeagueDto>> response = Rest.get(Uri.leagueUri(id), new ParameterizedTypeReference<List<LeagueDto>>() {});
+            ResponseEntity<List<LeagueDto>> response = rest.get(Uri.leagueUri(id), new ParameterizedTypeReference<List<LeagueDto>>() {});
             summonerJdbcRepository.bulkInsert(
                     response.getBody()
                     .stream()
