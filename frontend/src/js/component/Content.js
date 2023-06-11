@@ -3,8 +3,6 @@ import Profile from '../Profile';
 import MatchList from '../MatchList';
 import axios from 'axios';
 import {set} from '../Common';
-import progressAxios from '../api/ProgressAxios';
-import ProgressBar from './ProgressBar';
 import { useSelector } from "react-redux";
 
 const Content = ({ params }) =>{

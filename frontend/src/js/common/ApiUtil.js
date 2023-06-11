@@ -1,13 +1,13 @@
 import axios from "axios";
 
 
-export const post = async(url, params) => {
+export const _post = async(url, params) => {
     const user = JSON.parse(localStorage.getItem("user"));
     const response = await axios.post(url, 
         params,
         {
             headers: {
-                Authorization : user.accessToken
+                Authorization : "Bearer " + user.accessToken
             }
         }
     )
@@ -19,7 +19,7 @@ export const get = async(url, params) => {
     const response = await axios.get(url, {
         params : params,
         headers : {
-            Authorization : user.accessToken
+            Authorization : "Bearer " + user.accessToken
         }
     })
     return response;

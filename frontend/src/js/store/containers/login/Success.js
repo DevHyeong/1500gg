@@ -18,9 +18,10 @@ const Success = () =>{
             const query = qs.parse(location.search, {
                 ignoreQueryPrefix: true
             });
-            const {id, nickname, social_type, access_token} = query;
+            const {id, nickname, social_type, userId, access_token} = query;
             const user = {
                 id : id,
+                userId: userId,
                 nickname : nickname,
                 provider : social_type,
                 accessToken : access_token,

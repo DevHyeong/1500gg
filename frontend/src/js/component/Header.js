@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 
-
 const Header = ({ user, visible, index }) =>{
     const [hover, setHover] = useState(false);
     return (
         <header className="sticky shadow top-0 z-30 px-4 lg:px-0" style={{backgroundColor: "white"}}>
-            <div className="container mx-auto max-w-4xl  relative flex justify-between h-14">
+            <div className="container mx-auto max-w-4xl  relative flex justify-between h-14"
+                
+            >
                 <div className='absolute right-0 top-1/3'>
                     {
                         user.authenticated && 
@@ -27,7 +28,7 @@ const Header = ({ user, visible, index }) =>{
                     <div className='absolute right-0 top-2/3'>
                         <ul className='bg-gray text-sm text-right p-2'>
                             <li className=''><a href={"/userInfo?id=" + user.id}>내정보</a></li>
-                            <li className=''><a href={"/logout?id=" + user.id}>로그아웃</a></li>
+                            <li className=''><a href={"/logout"}>로그아웃</a></li>
                         </ul>
                     </div>
                     )
@@ -65,7 +66,7 @@ const Header = ({ user, visible, index }) =>{
                         전적검색
                         </a>
                         <a href="/posts" className={ (index == 1 ? "bg-gray-100 " : "" )+ "hover:bg-gray-50 text-gray-900 hover:text-gray-900 rounded-md py-2 px-3 inline-flex items-center text-sm"}>
-                        타임라인
+                        게시물
                         </a>
                     </div>
                 </nav>

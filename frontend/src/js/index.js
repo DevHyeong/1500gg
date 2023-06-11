@@ -20,7 +20,16 @@ const loadUser = () => {
         store.dispatch(login(JSON.parse(user)));
 
     }catch(e){
-        console.error('localStorage is not working')
+        console.error('localStorage is not working');
+        let obj = {
+            id: '',
+            nickname: '',
+            socialType: '',
+            accessToken: '',
+            authenticated: false
+        };
+        localStorage.setItem('user', JSON.stringify(obj))
+
     }
 }
 

@@ -22,9 +22,9 @@ const JoinPage = () =>{
             accessToken : query.access_token
         });
         if(response.status == 200){
-            navigate('/success', {
-                state: response.data.body
-            })
+              navigate('/success', {
+                 state: response.data.body
+             })
         }else{
 
         }

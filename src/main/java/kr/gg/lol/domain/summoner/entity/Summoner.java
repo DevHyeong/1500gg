@@ -18,7 +18,6 @@ public class Summoner {
 
     @Id
     private String name;
-
     private String accountId;
     private String id;
     private int profileIconId;

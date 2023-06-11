@@ -1,8 +1,7 @@
 package kr.gg.lol.domain.user.oauth.service;
 
 import kr.gg.lol.domain.user.entity.User;
-import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
-import kr.gg.lol.domain.user.oauth.factory.SimpleOAuth2Factory;
+import kr.gg.lol.domain.user.oauth.enums.SocialType;
 import kr.gg.lol.domain.user.oauth.factory.SimpleOAuth2FactoryImpl;
 import kr.gg.lol.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +22,16 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        SimpleOAuth2Factory simpleOAuth2Factory = SimpleOAuth2FactoryImpl
-                .createOAuth2Factory(userRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
-        OAuth2User user = simpleOAuth2Factory.createOAuth2User();
-
+        OAuth2User user = SimpleOAuth2FactoryImpl.createOAuth2User(userRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
         Optional<User> result = userRepository.findBySocialId((String) user.getAttribute("id"));
 
         //simpleOAuth2Factory.add("access_token", userRequest.getAccessToken().getTokenValue());
-        simpleOAuth2Factory.add(IS_REGISTED_USER, result.isPresent());
-        simpleOAuth2Factory.add(EXPIRED_AT, userRequest.getAccessToken().getExpiresAt());
-
+        user.getAttributes().put(IS_REGISTED_USER, result.isPresent());
+        user.getAttributes().put(EXPIRED_AT, userRequest.getAccessToken().getExpiresAt());
 
         if(result.isPresent()){
-            simpleOAuth2Factory.add(NICKNAME, result.get().getNickname());
-            simpleOAuth2Factory.add("userId", result.get().getId());
+            user.getAttributes().put(NICKNAME, result.get().getNickname());
+            user.getAttributes().put("userId", result.get().getId());
         }
         return user;
     }

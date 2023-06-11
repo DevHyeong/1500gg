@@ -17,6 +17,7 @@ public class KakaoOAuth2User implements OAuth2User {
     private Map<String, Object> attributes;
 
     public KakaoOAuth2User(Map<String, Object> attributes){
+
         this.attributes = attributes;
     }
 

@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -38,14 +39,13 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .formLogin().disable()
-                .httpBasic().disable();
+                .httpBasic().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
+                .antMatchers("/api/post/**").authenticated()
                 .anyRequest().permitAll()
-                //.antMatchers("/api/post/*").authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .oauth2Login()
                 .authorizationEndpoint()
@@ -59,8 +59,7 @@ public class SecurityConfig {
                 //.userService(oAuth2UserService)
                 .and()
                 .successHandler(oAuth2SuccessHandler);
-        http.addFilterBefore(jwtTokenFilter(), BasicAuthenticationFilter.class);
-
+        http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     @Bean

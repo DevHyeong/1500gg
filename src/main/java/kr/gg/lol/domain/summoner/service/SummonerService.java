@@ -42,7 +42,7 @@ public class SummonerService {
     public SummonerDto getSummonerByName(String name, boolean renewal){
 
         Optional<Summoner> summoner = summonerRepository.findByName(name);
-
+        System.out.println(name);
         if(renewal || summoner.isEmpty()){
             ResponseEntity<SummonerDto> response = Rest.get(Uri.summonerUri(name), SummonerDto.class);
             Summoner entity = new Summoner(response.getBody());
