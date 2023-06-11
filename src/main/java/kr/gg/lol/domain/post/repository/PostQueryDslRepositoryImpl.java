@@ -22,6 +22,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository{
                 .select(Projections.fields(PostDto.class,
                         post.id,
                         user.nickname,
+                        post.userId,
                         post.title,
                         post.content,
                         post.createdAt))
@@ -40,6 +41,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository{
                 .select(Projections.fields(PostDto.class,
                         post.id,
                         user.nickname,
+                        post.userId,
                         post.title,
                         post.content,
                         post.createdAt))

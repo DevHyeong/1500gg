@@ -32,7 +32,6 @@ public class SimpleOAuth2FactoryImpl {
                     map.put(k, v);
                 }
             });
-
             return new KakaoOAuth2User(map);
         }
         throw new IllegalArgumentException();

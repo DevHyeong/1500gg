@@ -44,6 +44,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .path(path)
                 .queryParam("access_token", jwtToken)
                 .queryParam("id", (String) oAuth2User.getAttribute("id"))
+                .queryParam("userId", (Long) oAuth2User.getAttribute("userId"))
                 .queryParam("social_type", oAuth2User.getName())
                 .queryParam("nickname", URLEncoder.encode((String) oAuth2User.getAttributes().get("nickname"), Charset.forName("UTF-8")));
         return uriComponents.build().toUriString();

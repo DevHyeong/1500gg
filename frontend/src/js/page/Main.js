@@ -8,31 +8,8 @@ import HeaderContainer from '../store/containers/common/HeaderContainer.js';
 
 export default () => {
 
-    const [board, setBoard] = useState();
-
-    const getBoardList = async () =>{
-
-        try{
-            const response = await axios.get("/api/board/getBoardList");
-            if(response.status === 200){
-                setBoard(response.data);
-            }
-
-        }catch(e){console.log(e)}
-    }
-
-    
-    const handleClick = (e) =>{
-        console.log(e);
-        location.href = "/board/detail/" + e.boardId;
-    }
-    
-
     useEffect(()=>{
-        getBoardList();
     },[]);
-
-
     return (
         <>
             <HeaderContainer/>

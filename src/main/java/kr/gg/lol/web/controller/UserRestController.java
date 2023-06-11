@@ -7,6 +7,7 @@ import kr.gg.lol.domain.user.oauth.model.NaverOAuth2User;
 import kr.gg.lol.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.h2.util.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -76,13 +77,12 @@ public class UserRestController {
     @GetMapping("/validateToken")
     public ApiResult<Boolean> validateToken(HttpServletRequest request){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        NaverOAuth2User naverOAuth2User = (NaverOAuth2User) authentication.getPrincipal();
-
-        log.debug("{} ", token);
-        naverOAuth2User.getAttributes().forEach((k,v) -> log.debug("{} {}", k, v));
-
-        return success(true);
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace("Bearer", "");
+        if(StringUtils.isNullOrEmpty(token)){
+            return success(false);
+        }
+        return success(tokenProvider.validateToken(LocalDateTime.now(), token));
+        //return success(true);
     }
 
 

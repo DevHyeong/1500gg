@@ -38,9 +38,9 @@ public enum OAuth2Provider {
     NAVER("naver"){
         @Override
         public OAuth2User getOAuth2User(Map<String, Object> attributes) {
-            Map<String, Object> map = (Map<String, Object>) attributes.get("response");
-            map.put(REGISTRATION_ID, this.getRegistrationId());
-            return new NaverOAuth2User(map);
+            //Map<String, Object> map = (Map<String, Object>) attributes.get("response");
+            attributes.put(REGISTRATION_ID, this.getRegistrationId());
+            return new NaverOAuth2User(attributes);
         }
 
         @Override
@@ -57,13 +57,6 @@ public enum OAuth2Provider {
 
     public abstract OAuth2User getOAuth2User(Map<String, Object> attributes);
     public abstract void logout(Authentication authentication);
-
-    public static OAuth2Provider from(String registrationId){
-        return Arrays.stream(OAuth2Provider.values())
-                .filter(e-> e.getRegistrationId().equals(registrationId))
-                .findFirst()
-                .get();
-    }
 
     private static void logout(String url, String accessToken){
         try {

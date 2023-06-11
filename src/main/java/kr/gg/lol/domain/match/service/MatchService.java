@@ -62,6 +62,7 @@ public class MatchService {
 
                 List<Ban> bans = new ArrayList<>();
                 entity.getTeams().stream().forEach(e-> {
+
                     bans.addAll(e.getBans());
                 });
 

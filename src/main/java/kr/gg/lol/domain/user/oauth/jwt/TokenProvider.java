@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static kr.gg.lol.common.constant.OAuth2Constants.REGISTRATION_ID;
@@ -23,6 +20,7 @@ import static kr.gg.lol.common.constant.OAuth2Constants.REGISTRATION_ID;
 @Service
 public class TokenProvider {
 
+    private final List<String> revokeTokens = new ArrayList<>();
     public String createToken(Authentication authentication){
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         Instant instant = (Instant) oAuth2User.getAttributes().get("expiresAt");
@@ -69,6 +67,14 @@ public class TokenProvider {
         return map;
     }
     public boolean validateToken(LocalDateTime now, String token){
+        Optional<String> result = revokeTokens.stream()
+                .filter(e-> e.equals(token))
+                .findFirst();
+
+        if(result.isPresent()){
+            return false;
+        }
+
         try{
             Claims claims = Jwts.parser()
                     .setSigningKey("WG3SWsDcaaagndmg985j930bcS00AxTC7G2dgRiqVyU=")
@@ -84,7 +90,7 @@ public class TokenProvider {
     }
 
     public void revokeToken(String token){
-
+        revokeTokens.add(token);
     }
 
 

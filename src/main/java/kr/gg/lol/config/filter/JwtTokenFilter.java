@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
@@ -24,17 +25,25 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try{
-            String token = tokenFromRequest(request);
-            Map<String, Object> attributes = tokenProvider.getUserFromToken(token);
-            OAuth2User user = SimpleOAuth2FactoryImpl.createOAuth2User(attributes);
-            Authentication authentication = new UserAuthentication(user);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }catch (Exception e){
-            log.error("{}", e);
+        String uri = request.getRequestURI();
+        if(uri.indexOf("/api/post/") > -1) {
+            try {
+                String token = tokenFromRequest(request);
+
+                if (!tokenProvider.validateToken(LocalDateTime.now(), token)) {
+                    throw new IllegalStateException();
+                }
+
+                Map<String, Object> attributes = tokenProvider.getUserFromToken(token);
+                OAuth2User user = SimpleOAuth2FactoryImpl.createOAuth2User(attributes);
+                Authentication authentication = new UserAuthentication(user);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception e) {
+                log.error("{}", e);
+                throw new IllegalStateException();
+            }
         }
         filterChain.doFilter(request, response);
-
     }
 
     private String tokenFromRequest(HttpServletRequest request){

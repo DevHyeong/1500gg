@@ -2,21 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../store/modules/user";
-import axios from "axios";
+import { _post } from "../../common/ApiUtil";
 
 const Logout = () => {
     const [result, setResult] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const action = async () => {
-        const response = await axios.post('/api/user/logout');
+        const response = await _post('/api/user/logout');
         setResult(true);
     }
 
     useEffect(() => {
+        action();
         localStorage.removeItem("user");
-        dispatch(logout())
-        action();   
+        dispatch(logout())           
     }, []);
 
     useEffect(() => {
