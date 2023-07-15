@@ -1,37 +1,26 @@
 package kr.gg.lol.domain.match.service;
 
-import kr.gg.lol.common.util.Rest;
-import kr.gg.lol.common.util.Uri;
+import kr.gg.lol.common.util.RiotApi;
+import kr.gg.lol.common.util.RiotURIGenerator;
 import kr.gg.lol.domain.match.dto.*;
 import kr.gg.lol.domain.match.entity.Ban;
 import kr.gg.lol.domain.match.entity.Match;
 import kr.gg.lol.domain.match.entity.Participant;
 import kr.gg.lol.domain.match.entity.Team;
 import kr.gg.lol.domain.match.repository.*;
-import kr.gg.lol.domain.summoner.dto.LeagueDto;
-import kr.gg.lol.domain.summoner.dto.SummonerDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static kr.gg.lol.common.constant.CacheConstants.MATCH;
-import static kr.gg.lol.common.constant.CacheConstants.MATCHES;
 
 @Slf4j
 @Service
@@ -39,7 +28,7 @@ import static kr.gg.lol.common.constant.CacheConstants.MATCHES;
 public class MatchService {
     private final MatchJdbcRepository matchJdbcRepository;
     private final MatchRepository matchRepository;
-    private final Rest rest;
+    private final RiotApi riotApi;
 
     /**
      *   매치 리스트
@@ -52,10 +41,10 @@ public class MatchService {
         List<String> matches = matchRepository.findMatchesByPuuid(puuid);
 
         if(renewal || matches.size() < 20){
-            ResponseEntity<List<String>> response = rest.get(Uri.matchesUri(puuid), new ParameterizedTypeReference<List<String>>() {});
+            ResponseEntity<List<String>> response = riotApi.getWithToken(RiotURIGenerator.matchesUri(puuid), new ParameterizedTypeReference<List<String>>() {});
 
             for(String id : response.getBody()){
-                ResponseEntity<MatchDto> res = rest.get(Uri.matchInfoUri(id), MatchDto.class);
+                ResponseEntity<MatchDto> res = riotApi.getWithToken(RiotURIGenerator.matchInfoUri(id), MatchDto.class);
                 Match entity = new Match(res.getBody());
                 matchJdbcRepository.saveWithoutRelation(entity);
                 matchJdbcRepository.bulkInsertParticipants(entity.getParticipants());
@@ -120,7 +109,7 @@ public class MatchService {
                 .expand(id)
                 .toUri();
 
-        ResponseEntity<CurrentGameInfoDto> response = rest.get(uri, CurrentGameInfoDto.class);
+        ResponseEntity<CurrentGameInfoDto> response = riotApi.getWithToken(uri, CurrentGameInfoDto.class);
         return response;
     }
 

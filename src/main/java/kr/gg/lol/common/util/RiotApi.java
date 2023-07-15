@@ -14,19 +14,17 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 @Slf4j
-
-
 @Component
-public class Rest {
+public class RiotApi {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ConfigFileProperties configFileProperties;
     private final String key;
-    public Rest(ConfigFileProperties configFileProperties) {
+    public RiotApi(ConfigFileProperties configFileProperties) {
         this.configFileProperties = configFileProperties;
         this.key = configFileProperties.getProperty("lol.api.key");
     }
 
-    public <T> ResponseEntity<T> get(URI uri, Class<T> responseType){
+    public <T> ResponseEntity<T> getWithToken(URI uri, Class<T> responseType){
         RequestEntity requestEntity = RequestEntity.get(uri)
                 .header("X-Riot-Token", key)
                 .build();
@@ -39,7 +37,7 @@ public class Rest {
         }
     }
 
-    public <T> ResponseEntity<T> get(URI uri, ParameterizedTypeReference<T> responseType){
+    public <T> ResponseEntity<T> getWithToken(URI uri, ParameterizedTypeReference<T> responseType){
         RequestEntity requestEntity = RequestEntity.get(uri)
                 .header("X-Riot-Token", key)
                 .build();
