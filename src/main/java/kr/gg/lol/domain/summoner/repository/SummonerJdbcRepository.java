@@ -9,10 +9,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Slf4j
 @Repository
 @RequiredArgsConstructor
-@Slf4j
 public class SummonerJdbcRepository {
 
     static final String TABLE_LEAGUE = "league";

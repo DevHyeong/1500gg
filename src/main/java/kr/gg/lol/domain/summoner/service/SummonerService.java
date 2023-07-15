@@ -18,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static kr.gg.lol.common.util.Preconditions.checkNotNull;
-import static kr.gg.lol.domain.summoner.dto.LeagueDto.toDto;
+import static kr.gg.lol.domain.summoner.dto.LeagueDto.toDtos;
 
 
 @Service
@@ -34,32 +32,42 @@ public class SummonerService {
 
     //@Cacheable(value = SUMMONER_NAME, key = "#name")
     @Transactional
-    public SummonerDto getSummonerByName(String name, boolean renewal){
+    public SummonerDto getSummonerByName(String name){
         Optional<Summoner> summoner = summonerRepository.findByName(name);
 
-        if(renewal || summoner.isEmpty()){
-            ResponseEntity<SummonerDto> response = riotApi.getWithToken(RiotURIGenerator.summonerUri(name), SummonerDto.class);
-            Summoner entity = new Summoner(response.getBody());
-            summonerRepository.save(entity);
-            return response.getBody();
+        if(summoner.isEmpty()){
+            return saveSummoner(name);
         }
+
         return new SummonerDto(summoner.get());
     }
 
     //@Cacheable(value = LEAGUE_ID, key = "#id")
-    public List<LeagueDto> getLeagueById(String id, boolean renewal){
+    public List<LeagueDto> getLeagueById(String id){
         Optional<List<League>> leagues = leagueRepository.findBySummonerId(id);
 
-        if(renewal || leagues.isEmpty() || leagues.get().size() < 1){
-            ResponseEntity<List<LeagueDto>> response = riotApi.getWithToken(RiotURIGenerator.leagueUri(id), new ParameterizedTypeReference<List<LeagueDto>>() {});
-            summonerJdbcRepository.bulkInsert(
-                    response.getBody()
-                    .stream()
-                    .map(e-> new League(e))
-                    .collect(Collectors.toList()));
-            return response.getBody();
+        if(leagues.isEmpty() || leagues.get().size() < 1){
+            return saveLeague(id);
         }
-        return toDto(leagues.get());
+
+        return toDtos(leagues.get());
+    }
+
+    public SummonerDto saveSummoner(String name){
+        ResponseEntity<SummonerDto> response = riotApi.getWithToken(RiotURIGenerator.summonerUri(name), SummonerDto.class);
+        Summoner entity = new Summoner(response.getBody());
+        Summoner result = summonerRepository.save(entity);
+        return new SummonerDto(result);
+    }
+
+    public List<LeagueDto> saveLeague(String id){
+        ResponseEntity<List<LeagueDto>> response = riotApi.getWithToken(RiotURIGenerator.leagueUri(id), new ParameterizedTypeReference<List<LeagueDto>>() {});
+        summonerJdbcRepository.bulkInsert(
+                response.getBody()
+                        .stream()
+                        .map(e-> new League(e))
+                        .collect(Collectors.toList()));
+        return toDtos(leagueRepository.findBySummonerId(id).get());
     }
 
 }

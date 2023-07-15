@@ -30,52 +30,21 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final RiotApi riotApi;
 
-    /**
-     *   매치 리스트
-     *
-     * */
     //@Cacheable(value = MATCHES, key = "#puuid")
     @Transactional
-    public List<String> getMatchesByPuuid(String puuid, boolean renewal){
+    public List<String> getMatchesByPuuid(String puuid){
 
         List<String> matches = matchRepository.findMatchesByPuuid(puuid);
 
-        if(renewal || matches.size() < 20){
-            ResponseEntity<List<String>> response = riotApi.getWithToken(RiotURIGenerator.matchesUri(puuid), new ParameterizedTypeReference<List<String>>() {});
-
-            for(String id : response.getBody()){
-                ResponseEntity<MatchDto> res = riotApi.getWithToken(RiotURIGenerator.matchInfoUri(id), MatchDto.class);
-                Match entity = new Match(res.getBody());
-                matchJdbcRepository.saveWithoutRelation(entity);
-                matchJdbcRepository.bulkInsertParticipants(entity.getParticipants());
-                matchJdbcRepository.bulkInsertTeams(entity.getTeams());
-
-                List<Ban> bans = new ArrayList<>();
-                entity.getTeams().stream().forEach(e-> {
-
-                    bans.addAll(e.getBans());
-                });
-
-                matchJdbcRepository.bulkInsertBans(bans);
-
-                res.getBody().getInfo().getTeams().forEach(t-> {
-                    t.setKillsChampion(sumKillsChampion(res.getBody().getInfo().getParticipants(), t.getTeamId()));
-                });
-            }
-            return response.getBody();
+        if(matches.size() < 1){
+            return getMatchIdsAndSaveMatches(puuid);
         }
 
         return matches;
-
     }
 
-    /**
-     *   매치 상세정보
-     *
-     * */
-
     //@Cacheable(value = MATCH, key = "#matchId")
-    @Transactional
+    @Transactional(readOnly = true)
     public List<MatchDto> getMatchesByIds(String... matchId){
         List<Match> matches = matchRepository.findMatches(matchId);
         List<Participant> participants = matchRepository.findParticipantsByMatchIds(matchId);
@@ -95,10 +64,31 @@ public class MatchService {
                         .collect(toList());
     }
 
-    /**
-     *  현재 게임중 정보
-     *
-     * */
+    public List<String> getMatchIdsAndSaveMatches(String puuid){
+        ResponseEntity<List<String>> matchIdsResponseEntity = riotApi.getWithToken(RiotURIGenerator.matchesUri(puuid), new ParameterizedTypeReference<List<String>>() {});
+
+        for(String id : matchIdsResponseEntity.getBody()){
+            ResponseEntity<MatchDto> matchDtoResponseEntity = riotApi.getWithToken(RiotURIGenerator.matchInfoUri(id), MatchDto.class);
+            Match entity = new Match(matchDtoResponseEntity.getBody());
+            matchJdbcRepository.saveWithoutRelation(entity);
+            matchJdbcRepository.bulkInsertParticipants(entity.getParticipants());
+            matchJdbcRepository.bulkInsertTeams(entity.getTeams());
+
+            List<Ban> bans = new ArrayList<>();
+            entity.getTeams().stream().forEach(e-> {
+                bans.addAll(e.getBans());
+            });
+
+            matchJdbcRepository.bulkInsertBans(bans);
+
+            matchDtoResponseEntity.getBody().getInfo().getTeams().forEach(t-> {
+                t.setKillsChampion(sumKillsChampion(matchDtoResponseEntity.getBody().getInfo().getParticipants(), t.getTeamId()));
+            });
+        }
+        return matchIdsResponseEntity.getBody();
+    }
+
+
     public ResponseEntity getActiveMatchById(String id){
 
         URI uri = UriComponentsBuilder

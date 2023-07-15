@@ -24,13 +24,12 @@ public class SummonerController {
 
     @GetMapping("/summoner/{name}")
     public ApiUtils.ApiResult<SummonerDto> summonerByName(@PathVariable String name){
-        return success(summonerService.getSummonerByName(name, false));
+        return success(summonerService.getSummonerByName(name));
     }
 
     @GetMapping("/league/{id}")
     public ApiUtils.ApiResult<List<LeagueDto>> leagueById(@PathVariable String id){
-        return success(summonerService.getLeagueById(id, false));
+        return success(summonerService.getLeagueById(id));
     }
-
 
 }

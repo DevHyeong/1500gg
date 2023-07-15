@@ -29,7 +29,7 @@ public class LeagueDto {
     private boolean freshBlood;
     private boolean inactive;
 
-    public static List<LeagueDto> toDto(List<League> leagues){
+    public static List<LeagueDto> toDtos(List<League> leagues){
         List<LeagueDto> leagueDtos = new ArrayList<>();
         leagues.forEach(e-> {
 

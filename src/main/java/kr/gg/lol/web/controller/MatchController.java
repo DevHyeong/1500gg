@@ -24,12 +24,7 @@ public class MatchController {
 
     @GetMapping("/matches/{puuId}")
     public ApiResult<List<String>> matchesByPuuId(@PathVariable String puuId){
-        return success(matchService.getMatchesByPuuid(puuId, false));
-    }
-
-    @GetMapping("/match/{matchId}")
-    public ApiResult<List<MatchDto>> leagueById(@PathVariable String matchId){
-        return success(matchService.getMatchesByIds(matchId));
+        return success(matchService.getMatchesByPuuid(puuId));
     }
 
     @PostMapping("/v1/matches")

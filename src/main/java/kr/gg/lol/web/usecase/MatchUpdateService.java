@@ -18,9 +18,9 @@ public class MatchUpdateService {
 
     @Transactional
     public void updateMatches(String name){
-        SummonerDto summoner = summonerService.getSummonerByName(name, true);
-        summonerService.getLeagueById(summoner.getId(), true);
-        matchService.getMatchesByPuuid(summoner.getPuuid(), true);
+        SummonerDto summoner = summonerService.saveSummoner(name);
+        summonerService.saveLeague(summoner.getId());
+        matchService.getMatchIdsAndSaveMatches(summoner.getPuuid());
     }
 
 }
