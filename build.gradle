@@ -43,6 +43,7 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation group: 'org.jeasy', name: 'easy-random-core', version: '5.0.0'
+	testImplementation 'com.squareup.okhttp3:mockwebserver'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 }

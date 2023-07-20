@@ -4,6 +4,7 @@ import kr.gg.lol.domain.user.entity.User;
 import kr.gg.lol.domain.user.oauth.enums.SocialType;
 import kr.gg.lol.domain.user.oauth.factory.SimpleOAuth2FactoryImpl;
 import kr.gg.lol.domain.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,9 +17,10 @@ import java.util.Optional;
 import static kr.gg.lol.common.constant.OAuth2Constants.*;
 
 @Service
+@RequiredArgsConstructor
 public class OAuth2UserService extends DefaultOAuth2UserService {
-    @Autowired
-    private UserRepository userRepository;
+
+    private final UserRepository userRepository;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);

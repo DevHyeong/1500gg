@@ -1,0 +1,70 @@
+package kr.gg.lol.domain.user.oauth;
+
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+
+public final class TestClientRegistrations {
+
+	private TestClientRegistrations() {
+	}
+
+	public static ClientRegistration.Builder clientRegistration() {
+		// @formatter:off
+		return ClientRegistration.withRegistrationId("naver")
+				.redirectUri("{baseUrl}/{action}/oauth2/code/{registrationId}")
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.scope("read:user")
+				.authorizationUri("https://example.com/login/oauth/authorize")
+				.tokenUri("https://example.com/login/oauth/access_token")
+				.jwkSetUri("https://example.com/oauth2/jwk")
+				.issuerUri("https://example.com")
+				.userInfoUri("https://api.example.com/user")
+				.userNameAttributeName("id")
+				.clientName("Client Name")
+				.clientId("client-id")
+				.clientSecret("client-secret");
+		// @formatter:on
+	}
+
+	public static ClientRegistration.Builder clientRegistration2() {
+		// @formatter:off
+		return ClientRegistration.withRegistrationId("registration-id-2")
+				.redirectUri("{baseUrl}/{action}/oauth2/code/{registrationId}")
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.scope("read:user")
+				.authorizationUri("https://example.com/login/oauth/authorize")
+				.tokenUri("https://example.com/login/oauth/access_token")
+				.userInfoUri("https://api.example.com/user")
+				.userNameAttributeName("id")
+				.clientName("Client Name")
+				.clientId("client-id-2")
+				.clientSecret("client-secret");
+		// @formatter:on
+	}
+
+	public static ClientRegistration.Builder clientCredentials() {
+		// @formatter:off
+		return clientRegistration()
+				.registrationId("client-credentials")
+				.clientId("client-id")
+				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS);
+		// @formatter:on
+	}
+
+	public static ClientRegistration.Builder password() {
+		// @formatter:off
+		return ClientRegistration.withRegistrationId("password")
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.PASSWORD)
+				.scope("read", "write")
+				.tokenUri("https://example.com/login/oauth/access_token")
+				.clientName("Client Name")
+				.clientId("client-id")
+				.clientSecret("client-secret");
+		// @formatter:on
+	}
+
+}
