@@ -35,7 +35,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         getRedirectStrategy().sendRedirect(request, response, target);
     }
 
-    private String generateTargetUrl(Authentication authentication){
+    public String generateTargetUrl(Authentication authentication){
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         boolean isRegisted = (boolean) oAuth2User.getAttributes().get(IS_REGISTED_USER);
         return isRegisted ? generateExistingUser(authentication) : generateNewUser(authentication);
