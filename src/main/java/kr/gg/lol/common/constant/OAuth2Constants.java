@@ -1,10 +1,11 @@
 package kr.gg.lol.common.constant;
 
 public interface OAuth2Constants {
-    String JOIN_PATH = "/join";
-    String SUCCESS_PATH = "/success";
     String EXPIRED_AT = "expiresAt";
-    String IS_REGISTED_USER = "isRegistedUser";
+    String IS_USER_REGISTED = "isUserRegisted";
     String REGISTRATION_ID = "registrationId";
     String NICKNAME = "nickname";
+    String USER_IO = "userId";
+    String ID = "id";
+
 }

@@ -19,6 +19,8 @@ import static kr.gg.lol.common.constant.OAuth2Constants.*;
 
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    private static final String SUCCESS_PATH = "/success";
+    private static final String JOIN_PATH = "/join";
     private final TokenProvider tokenProvider;
     private final ConfigFileProperties configFileProperties;
     private final String DOMAIN;
@@ -37,7 +39,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     public String generateTargetUrl(Authentication authentication){
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        boolean isRegisted = (boolean) oAuth2User.getAttributes().get(IS_REGISTED_USER);
+        boolean isRegisted = (boolean) oAuth2User.getAttributes().get(IS_USER_REGISTED);
         return isRegisted ? generateExistingUser(authentication) : generateNewUser(authentication);
     }
 
@@ -48,8 +50,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         UriComponentsBuilder uriComponents =  UriComponentsBuilder.fromUriString(DOMAIN)
                 .path(path)
                 .queryParam("access_token", jwtToken)
-                .queryParam("id", (String) oAuth2User.getAttribute("id"))
-                .queryParam("userId", (Long) oAuth2User.getAttribute("userId"))
+                .queryParam("id", (String) oAuth2User.getAttribute(ID))
+                .queryParam("userId", (Long) oAuth2User.getAttribute(USER_IO))
                 .queryParam("social_type", oAuth2User.getName())
                 .queryParam("nickname", URLEncoder.encode((String) oAuth2User.getAttributes().get("nickname"), Charset.forName("UTF-8")));
         return uriComponents.build().toUriString();
@@ -61,7 +63,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         UriComponentsBuilder uriComponents =  UriComponentsBuilder.fromUriString(DOMAIN)
                 .path(path)
                 .queryParam("access_token", jwtToken)
-                .queryParam("id", (String) oAuth2User.getAttribute("id"))
+                .queryParam("id", (String) oAuth2User.getAttribute(ID))
                 .queryParam("social_type", oAuth2User.getName());
         return uriComponents.build().toUriString();
     }

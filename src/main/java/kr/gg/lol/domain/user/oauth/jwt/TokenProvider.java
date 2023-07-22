@@ -1,6 +1,5 @@
 package kr.gg.lol.domain.user.oauth.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -15,7 +14,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static kr.gg.lol.common.constant.OAuth2Constants.REGISTRATION_ID;
+import static kr.gg.lol.common.constant.OAuth2Constants.*;
 
 @Service
 public class TokenProvider {
@@ -23,13 +22,13 @@ public class TokenProvider {
     private final List<String> revokeTokens = new ArrayList<>();
     public String createToken(Authentication authentication){
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        Instant instant = (Instant) oAuth2User.getAttributes().get("expiresAt");
+        Instant instant = (Instant) oAuth2User.getAttributes().get(EXPIRED_AT);
         Date expiresAt = Date.from(instant);
 
         return Jwts.builder()
                 .setSubject(oAuth2User.getName())
-                .claim("id", oAuth2User.getAttribute("id"))
-                .claim("userId", oAuth2User.getAttribute("userId"))
+                .claim(ID, oAuth2User.getAttribute(ID))
+                .claim(USER_IO, oAuth2User.getAttribute(USER_IO))
                 .setIssuedAt(new Date())
                 .setExpiration(expiresAt)
                 .signWith(SignatureAlgorithm.HS256, "WG3SWsDcaaagndmg985j930bcS00AxTC7G2dgRiqVyU=")
@@ -45,8 +44,8 @@ public class TokenProvider {
         Date expiresAt = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5));
         return Jwts.builder()
                 .setSubject(oAuth2User.getName())
-                .claim("id", oAuth2User.getAttribute("id"))
-                .claim("userId",  oAuth2User.getAttribute("userId"))
+                .claim(ID, oAuth2User.getAttribute(ID))
+                .claim(USER_IO,  oAuth2User.getAttribute(USER_IO))
                 .setIssuedAt(new Date())
                 .setExpiration(expiresAt)
                 .signWith(SignatureAlgorithm.HS256, "WG3SWsDcaaagndmg985j930bcS00AxTC7G2dgRiqVyU=")
@@ -60,10 +59,10 @@ public class TokenProvider {
                 .getBody();
 
         Map<String, Object> map = new HashMap<>();
-        map.put("expires_at", claims.getExpiration());
+        map.put(EXPIRED_AT, claims.getExpiration());
         map.put(REGISTRATION_ID, claims.getSubject());
-        map.put("id", claims.get("id"));
-        map.put("userId", claims.get("userId"));
+        map.put(ID, claims.get(ID));
+        map.put(USER_IO, claims.get(USER_IO));
         return map;
     }
     public boolean validateToken(LocalDateTime now, String token){
