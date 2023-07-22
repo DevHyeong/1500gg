@@ -1,28 +1,22 @@
 package kr.gg.lol.web.controller;
 
 import kr.gg.lol.domain.user.dto.UserDto;
-import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
 import kr.gg.lol.domain.user.oauth.jwt.TokenProvider;
-import kr.gg.lol.domain.user.oauth.model.NaverOAuth2User;
 import kr.gg.lol.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.h2.util.StringUtils;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static kr.gg.lol.common.util.ApiUtils.*;
 
-import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor

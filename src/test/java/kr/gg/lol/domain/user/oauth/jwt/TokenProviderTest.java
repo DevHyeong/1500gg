@@ -3,11 +3,8 @@ package kr.gg.lol.domain.user.oauth.jwt;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
-import kr.gg.lol.domain.user.dto.UserDto;
-import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
 import kr.gg.lol.domain.user.oauth.model.NaverOAuth2User;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -49,10 +46,6 @@ class TokenProviderTest {
 
     @Test
     void testIntegerToLong(){
-        Integer i = new Integer(55);
-
-        Long id = Long.parseLong(String.valueOf(i));
-
 
     }
 

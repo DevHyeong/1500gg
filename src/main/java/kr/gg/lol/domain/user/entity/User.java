@@ -1,7 +1,6 @@
 package kr.gg.lol.domain.user.entity;
 
 import kr.gg.lol.domain.user.dto.UserDto;
-import kr.gg.lol.domain.user.oauth.enums.OAuth2Provider;
 import kr.gg.lol.domain.user.oauth.enums.SocialType;
 import lombok.Getter;
 
