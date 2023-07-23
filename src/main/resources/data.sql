@@ -1,5 +1,5 @@
 
-INSERT INTO summoner VALUES ('팀운 그 잡채', 'QsiZS9Qfgm-3-XyNtbUN0Q6sISfQouNMNPsGNN2IduPe8j4', '2pBOKMjspFzaFFfY6arc3I_sZ-xPWVbrtumRjHfQpwtS2_8', 4779, 'i2xfv9hiybuQxfRGxkHHq5-q8sxLopkLdPoZ1zWRB6a0pmVVVcMhFK5xdmXdyB4KYI08td3BiDnbAw', 366, NULL);
+INSERT INTO summoner VALUES ('팀운 그 잡채', 'QsiZS9Qfgm-3-XyNtbUN0Q6sISfQouNMNPsGNN2IduPe8j4', '2pBOKMjspFzaFFfY6arc3I_sZ-xPWVbrtumRjHfQpwtS2_8', 4779, 'i2xfv9hiybuQxfRGxkHHq5-q8sxLopkLdPoZ1zWRB6a0pmVVVcMhFK5xdmXdyB4KYI08td3BiDnbAw', 366, '2023-04-09 15:46:09.365607');
 INSERT INTO league VALUES ('2pBOKMjspFzaFFfY6arc3I_sZ-xPWVbrtumRjHfQpwtS2_8', 'RANKED_SOLO_5x5', '3df4659e-899d-4bf7-83a1-c6fb17f0241b', 0, 52, 'III', '팀운 그 잡채', 'GOLD', NULL, 35);
 
 INSERT INTO match_info VALUES ('KR_6424854720','2023-03-27 22:24:32',848,'2023-03-27 22:39:17',6424854720,'ARAM','teambuilder-match-6424854720','2023-03-27 22:25:09','MATCHED_GAME','13.6.499.7758',12,'KR',450,'');

@@ -30,7 +30,7 @@ public class MatchUpdateService {
                     throw new SummonerNotFoundException();
                 });
 
-        if(Duration.between(LocalDateTime.now(),summoner.getUpdatedAt()).toMinutes() <= LIMITED_MINUTES){
+        if( Duration.between(summoner.getUpdatedAt(), LocalDateTime.now()).toMinutes() <= LIMITED_MINUTES){
             throw new IllegalStateException();
         }
 

@@ -33,7 +33,7 @@ class MatchUpdateServiceTest {
     }
 
     @Test
-    void updateMatchesWhenSummonerIsNotExistInDatabaseThenThrowRuntimeException() {
+    void updateMatchesWhenSummonerIsNotExistInDatabaseThenThrowSummonerNotFoundException() {
         //given
         String name = "서해 꿀주먹";
         given(summonerRepository.findByName(name)).willReturn(Optional.empty());
@@ -43,11 +43,11 @@ class MatchUpdateServiceTest {
     }
 
     @Test
-    void updateMatchesWhenUpdatedBeforeOneHoursThenThrowRuntimeException(){
+    void updateMatchesWhenRecentlyUpdatedThenThrowIllegalStateException(){
         //given
         String name = "서해 꿀주먹";
         Summoner summoner = new Summoner();
-        summoner.setUpdatedAt(LocalDateTime.now().plusMinutes(60));
+        summoner.setUpdatedAt(LocalDateTime.now().minusMinutes(60));
         given(summonerRepository.findByName(name)).willReturn(Optional.of(summoner));
 
         //when, then
@@ -61,7 +61,7 @@ class MatchUpdateServiceTest {
         Summoner summoner = new Summoner();
         summoner.setId("id");
         summoner.setPuuid("puuid");
-        summoner.setUpdatedAt(LocalDateTime.now().plusMinutes(70));
+        summoner.setUpdatedAt(LocalDateTime.now().minusMinutes(70));
         given(summonerRepository.findByName(name)).willReturn(Optional.of(summoner));
         given(summonerService.saveSummoner(name)).willReturn(new SummonerDto());
         given(summonerService.saveLeague(summoner.getId())).willReturn(new ArrayList<>());
