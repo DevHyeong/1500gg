@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
-import static kr.gg.lol.common.constant.OAuth2Constants.IS_REGISTED_USER;
+import static kr.gg.lol.common.constant.OAuth2Constants.*;
 import static kr.gg.lol.common.util.TestUriCompoents.generate;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,11 +71,11 @@ class OAuth2SuccessHandlerTest {
     private Authentication naverOAuth2UserWhenUserIsExist(){
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(IS_REGISTED_USER, true);
-        attributes.put("id", "test");
-        attributes.put("userId", 1L);
-        attributes.put("nickname", "생각하는개발자");
-        attributes.put("expiresAt", Instant.parse("2100-07-22T12:34:56Z"));
+        attributes.put(IS_USER_REGISTED, true);
+        attributes.put(ID, "test");
+        attributes.put(USER_IO, 1L);
+        attributes.put(NICKNAME, "생각하는개발자");
+        attributes.put(EXPIRED_AT, Instant.parse("2100-07-22T12:34:56Z"));
 
         return new UserAuthentication(new NaverOAuth2User(attributes));
     }
@@ -83,8 +83,8 @@ class OAuth2SuccessHandlerTest {
     private Authentication naverOAuth2UserWhenUserIsNotExist(){
         Map<String, Object> attributes = new HashMap<>();
 
-        attributes.put(IS_REGISTED_USER, false);
-        attributes.put("id", "test");
+        attributes.put(IS_USER_REGISTED, false);
+        attributes.put(ID, "test");
 
         return new UserAuthentication(new NaverOAuth2User(attributes));
     }
