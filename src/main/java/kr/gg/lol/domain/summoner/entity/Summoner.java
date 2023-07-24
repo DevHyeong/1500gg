@@ -15,7 +15,6 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 @AllArgsConstructor
 @Builder
 public class Summoner {
-
     @Id
     private String name;
     private String accountId;
@@ -38,6 +37,5 @@ public class Summoner {
     public Summoner(SummonerDto source){
         copyProperties(source, this);
     }
-
 
 }

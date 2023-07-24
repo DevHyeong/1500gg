@@ -19,10 +19,7 @@ public class SummonerDto {
     private String puuid;
     private long summonerLevel;
 
-
     public SummonerDto(Summoner source){
         copyProperties(source, this);
     }
-
-
 }

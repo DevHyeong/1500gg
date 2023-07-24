@@ -28,28 +28,6 @@ public class UserRestController {
     private final UserService userService;
     private final TokenProvider tokenProvider;
 
-
-//
-//    @GetMapping("/oauth2/{socialType}")
-//    public void callbackOAuth2(HttpServletResponse response,
-//                         @PathVariable final String socialType, String code) throws IOException {
-//        OAuth2TokenResponse oAuth2TokenResponse = oAuth2Service.tokenRequest(OAuth2Provider.valueOf(socialType), code);
-//        OAuth2User user = oAuth2Service.userInfoRequest(OAuth2Provider.valueOf(socialType), oAuth2TokenResponse.getAccess_token());
-//
-//        if(SecurityContextHolder.getContext().getAuthentication() instanceof UserDto){
-//            UserDto userDto = (UserDto) SecurityContextHolder.getContext().getAuthentication();
-//            response.sendRedirect("http://localhost:3000/success?nickname="
-//                    + URLEncoder.encode(userDto.getNickname(), Charset.forName("UTF-8"))
-//                    + "&id=" + userDto.getId()
-//                    + "&social_type=" + userDto.getProvider()
-//                    + "&access_token=" + userDto.getAccessToken());
-//        }else{
-//            response.sendRedirect("http://localhost:3000/join?access_token=" + oAuth2TokenResponse.getAccess_token()
-//                    + "&social_type=" + socialType
-//                    + "&id=" + user.getName());
-//        }
-//    }
-
     @PostMapping("/validate")
     public ApiResult<Boolean> validateNickname(@RequestBody UserDto userDto){
         return success(userService.validateNickname(userDto.getNickname()));
