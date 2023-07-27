@@ -47,7 +47,9 @@ module.exports = {
     open: true,
     historyApiFallback: true,
     proxy: {
-      "/api": "http://localhost:1234"
+      "/api": "http://localhost:1234",
+      "/login/oauth2" : "http://localhost:1234",
+      "/oauth2" : "http://localhost:1234"
     }
   },
   plugins: [

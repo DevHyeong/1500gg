@@ -33,7 +33,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         if(result.isPresent()){
             user.getAttributes().put(NICKNAME, result.get().getNickname());
-            user.getAttributes().put(USER_IO, result.get().getId());
+            user.getAttributes().put(USER_ID, result.get().getId());
         }
         return user;
     }

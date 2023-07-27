@@ -28,7 +28,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .setSubject(oAuth2User.getName())
                 .claim(ID, oAuth2User.getAttribute(ID))
-                .claim(USER_IO, oAuth2User.getAttribute(USER_IO))
+                .claim(USER_ID, oAuth2User.getAttribute(USER_ID))
                 .setIssuedAt(new Date())
                 .setExpiration(expiresAt)
                 .signWith(SignatureAlgorithm.HS256, "WG3SWsDcaaagndmg985j930bcS00AxTC7G2dgRiqVyU=")
@@ -45,7 +45,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .setSubject(oAuth2User.getName())
                 .claim(ID, oAuth2User.getAttribute(ID))
-                .claim(USER_IO,  oAuth2User.getAttribute(USER_IO))
+                .claim(USER_ID,  oAuth2User.getAttribute(USER_ID))
                 .setIssuedAt(new Date())
                 .setExpiration(expiresAt)
                 .signWith(SignatureAlgorithm.HS256, "WG3SWsDcaaagndmg985j930bcS00AxTC7G2dgRiqVyU=")
@@ -62,7 +62,7 @@ public class TokenProvider {
         map.put(EXPIRED_AT, claims.getExpiration());
         map.put(REGISTRATION_ID, claims.getSubject());
         map.put(ID, claims.get(ID));
-        map.put(USER_IO, claims.get(USER_IO));
+        map.put(USER_ID, claims.get(USER_ID));
         return map;
     }
     public boolean validateToken(LocalDateTime now, String token){

@@ -73,7 +73,7 @@ class OAuth2SuccessHandlerTest {
 
         attributes.put(IS_USER_REGISTED, true);
         attributes.put(ID, "test");
-        attributes.put(USER_IO, 1L);
+        attributes.put(USER_ID, 1L);
         attributes.put(NICKNAME, "생각하는개발자");
         attributes.put(EXPIRED_AT, Instant.parse("2100-07-22T12:34:56Z"));
 
