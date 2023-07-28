@@ -8,10 +8,13 @@ import kr.gg.lol.domain.user.oauth.jwt.TokenProvider;
 import kr.gg.lol.domain.user.oauth.model.UserAuthentication;
 import kr.gg.lol.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import java.util.Map;
+
+import static kr.gg.lol.common.constant.OAuth2Constants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,21 +26,33 @@ public class UserService {
     }
 
     public UserDto signIn(UserDto userDto){
-        Map<String, Object> attributes = tokenProvider.getUserFromToken(userDto.getAccessToken());
-        OAuth2User oAuth2User = SimpleOAuth2FactoryImpl.createOAuth2User(attributes);
-        userDto.setSocialType((SocialType) oAuth2User.getAttribute("socialType"));
-        userDto.setSocialId((String)oAuth2User.getAttribute("id"));
-
-        User user = new User(userDto);
-        UserDto securedUser = new UserDto(userRepository.save(user));
-        securedUser.setAccessToken(userDto.getAccessToken());
-        securedUser.setAuthenticated(true);
-        //securedUser.setExpiredAt((Date) attributes.get("expires_at"));
-        //        .queryParam("access_token", jwtToken)
-        return securedUser;
+        User user = getUserFromUserDto(userDto);
+        UserDto securedUserDto = new UserDto(userRepository.save(user));
+        securedUserDto.setAccessToken(regenerateAccessToken(userDto, securedUserDto));
+        securedUserDto.setAuthenticated(true);
+        return securedUserDto;
     }
 
     public void logout(){
-        UserAuthentication userAuthentication = (UserAuthentication) SecurityContextHolder.getContext().getAuthentication();
+        Authentication userAuthentication = (Authentication) SecurityContextHolder.getContext().getAuthentication();
+        OAuth2User oAuth2User = (OAuth2User) userAuthentication.getPrincipal();
+        String token = (String) oAuth2User.getAttributes().get(ACCESS_TOKEN);
+        tokenProvider.revokeToken(token);
+    }
+
+    public User getUserFromUserDto(UserDto userDto){
+        Map<String, Object> attributes = tokenProvider.getUserFromToken(userDto.getAccessToken());
+        OAuth2User oAuth2User = SimpleOAuth2FactoryImpl.createOAuth2User(attributes);
+        userDto.setSocialType(SocialType.NAVER);
+        userDto.setSocialId((String)oAuth2User.getAttribute("id"));
+        return new User(userDto);
+    }
+
+    private String regenerateAccessToken(UserDto requestUserDto, UserDto savedUserDto){
+        Map<String, Object> attributes = tokenProvider.getUserFromToken(requestUserDto.getAccessToken());
+        OAuth2User oAuth2User = SimpleOAuth2FactoryImpl.createOAuth2User(attributes);
+        oAuth2User.getAttributes().put(USER_ID, savedUserDto.getId());
+        oAuth2User.getAttributes().put(NICKNAME, savedUserDto.getNickname());
+        return tokenProvider.createToken(new UserAuthentication(oAuth2User));
     }
 }

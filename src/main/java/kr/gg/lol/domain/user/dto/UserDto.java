@@ -29,6 +29,15 @@ public class UserDto{
         this.nickname = user.getNickname();
         this.socialType = user.getSocialType();
     }
+    public UserDto(User user, String accessToken, boolean authenticated){
+        this.id = user.getId();
+        this.nickname = user.getNickname();
+        this.socialType = user.getSocialType();
+        this.accessToken = accessToken;
+        this.authenticated = authenticated;
+    }
+
+
     @Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
