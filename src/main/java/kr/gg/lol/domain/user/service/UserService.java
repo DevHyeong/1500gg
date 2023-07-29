@@ -43,7 +43,7 @@ public class UserService {
     public User getUserFromUserDto(UserDto userDto){
         Map<String, Object> attributes = tokenProvider.getUserFromToken(userDto.getAccessToken());
         OAuth2User oAuth2User = SimpleOAuth2FactoryImpl.createOAuth2User(attributes);
-        userDto.setSocialType(SocialType.NAVER);
+        userDto.setSocialTypeStr(oAuth2User.getName());
         userDto.setSocialId((String)oAuth2User.getAttribute("id"));
         return new User(userDto);
     }

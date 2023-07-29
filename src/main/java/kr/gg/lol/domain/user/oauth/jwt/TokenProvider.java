@@ -22,9 +22,7 @@ public class TokenProvider {
     private final List<String> revokeTokens = new ArrayList<>();
     public String createToken(Authentication authentication){
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        Instant instant = (Instant) oAuth2User.getAttributes().get(EXPIRED_AT);
-        Date expiresAt = Date.from(instant);
-
+        Date expiresAt = new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24));
         return Jwts.builder()
                 .setSubject(oAuth2User.getName())
                 .claim(ID, oAuth2User.getAttribute(ID))

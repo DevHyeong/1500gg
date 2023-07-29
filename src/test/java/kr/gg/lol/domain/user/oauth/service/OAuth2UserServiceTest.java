@@ -75,7 +75,6 @@ class OAuth2UserServiceTest {
 
         //then
         assertTrue((boolean) user.getAttribute(IS_USER_REGISTED));
-        assertEquals(this.accessToken.getExpiresAt(), user.getAttribute(EXPIRED_AT));
         assertEquals(mockUser.getNickname(), user.getAttribute(NICKNAME));
         assertEquals(mockUser.getId(), (Long) user.getAttribute("userId"));
     }

@@ -27,9 +27,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User user = SimpleOAuth2FactoryImpl.createOAuth2User(userRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
         Optional<User> result = userRepository.findBySocialId((String) user.getAttribute("id"));
 
-        //simpleOAuth2Factory.add("access_token", userRequest.getAccessToken().getTokenValue());
         user.getAttributes().put(IS_USER_REGISTED, result.isPresent());
-        user.getAttributes().put(EXPIRED_AT, userRequest.getAccessToken().getExpiresAt());
 
         if(result.isPresent()){
             user.getAttributes().put(NICKNAME, result.get().getNickname());

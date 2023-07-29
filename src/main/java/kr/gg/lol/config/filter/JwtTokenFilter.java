@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
+
+import static kr.gg.lol.common.constant.OAuth2Constants.ACCESS_TOKEN;
+
 @Slf4j
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -26,7 +29,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
-        if(uri.indexOf("/api/post/") > -1) {
+        if(uri.indexOf("/api/post/") > -1 || uri.indexOf("/api/user/logout") > -1) {
             try {
                 String token = tokenFromRequest(request);
 
@@ -35,6 +38,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 }
 
                 Map<String, Object> attributes = tokenProvider.getUserFromToken(token);
+                attributes.put(ACCESS_TOKEN, token);
                 OAuth2User user = SimpleOAuth2FactoryImpl.createOAuth2User(attributes);
                 Authentication authentication = new UserAuthentication(user);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

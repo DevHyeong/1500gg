@@ -5,9 +5,12 @@ import kr.gg.lol.domain.user.oauth.enums.SocialType;
 import lombok.Getter;
 import lombok.Setter;
 import net.minidev.json.JSONObject;
+import org.springframework.util.Assert;
+
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Getter
 @Setter
@@ -37,6 +40,19 @@ public class UserDto{
         this.authenticated = authenticated;
     }
 
+    public void setSocialType(SocialType socialType){
+        this.socialType = socialType;
+    }
+
+    public void setSocialTypeStr(String value){
+        Assert.notNull(value);
+        this.socialType = Arrays.stream(SocialType.values())
+                .filter(e-> e.getValue().equals(value))
+                .findFirst()
+                .orElseThrow(() -> {
+                    throw new IllegalArgumentException(value + " is not socialType");
+                });
+    }
 
     @Override
     public String toString() {
