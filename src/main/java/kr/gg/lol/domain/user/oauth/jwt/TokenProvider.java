@@ -1,9 +1,6 @@
 package kr.gg.lol.domain.user.oauth.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -37,9 +34,8 @@ public class TokenProvider {
      *  temporary token for join
      *
      * */
-    public String createTempToken(Authentication authentication){
+    public String createTempToken(Authentication authentication, Date expiresAt){
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        Date expiresAt = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5));
         return Jwts.builder()
                 .setSubject(oAuth2User.getName())
                 .claim(ID, oAuth2User.getAttribute(ID))
@@ -81,7 +77,9 @@ public class TokenProvider {
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
             return now.isBefore(expiredAt);
-        }catch (MalformedJwtException ex){
+        }catch (MalformedJwtException ex) {
+            return false;
+        }catch (ExpiredJwtException ex){
             return false;
         }
     }

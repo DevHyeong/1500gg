@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static kr.gg.lol.common.constant.OAuth2Constants.*;
 
@@ -58,7 +60,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
     private String generateNewUser(Authentication authentication){
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String jwtToken = tokenProvider.createTempToken(authentication);
+        Date expiresAt = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5));
+        String jwtToken = tokenProvider.createTempToken(authentication, expiresAt);
         String path = JOIN_PATH;
         UriComponentsBuilder uriComponents =  UriComponentsBuilder.fromUriString(DOMAIN)
                 .path(path)

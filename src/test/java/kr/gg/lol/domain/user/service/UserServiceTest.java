@@ -18,8 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static kr.gg.lol.common.constant.OAuth2Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -86,6 +88,7 @@ class UserServiceTest {
         attributes.put(REGISTRATION_ID, "naver");
 
         Authentication authentication = new UserAuthentication(new NaverOAuth2User(attributes));
-        return tokenProvider.createTempToken(authentication);
+        Date expiresAt = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5));
+        return tokenProvider.createTempToken(authentication, expiresAt);
     }
 }
